@@ -121,4 +121,9 @@ public final class HallRoom extends JPanel implements RoomInterface {
     public int getRoomPriority() {
         return 0;
     }
+
+    @Override
+    public int compareTo(RoomInterface other) {
+        return this.getRoomPriority() - other.getRoomPriority();
+    }
 }

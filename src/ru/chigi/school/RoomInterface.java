@@ -24,7 +24,7 @@ import javax.swing.*;
  * Room interface
  * @author Max E. Kuznecov <mek@mek.uz.ua>
  */
-public interface RoomInterface {
+public interface RoomInterface extends Comparable<RoomInterface> {
     /**
      * Get room name
      * @return room name

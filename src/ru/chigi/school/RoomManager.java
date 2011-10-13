@@ -19,6 +19,9 @@
 package ru.chigi.school;
 
 import javax.swing.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.ServiceLoader;
 
 /**
@@ -26,15 +29,24 @@ import java.util.ServiceLoader;
  * @author Max E. Kuznecov <mek@mek.uz.ua>
  */
 public class RoomManager extends JTabbedPane{
-    private ServiceLoader<RoomInterface> rooms;
+    private List<RoomInterface> rooms = new ArrayList<RoomInterface>();
 
     public RoomManager() {
         super();
 
-        rooms = ServiceLoader.load(RoomInterface.class);
-
-        for(RoomInterface i : rooms) {
-            System.out.println(i.getRoomName());
+        for(RoomInterface i : ServiceLoader.load(RoomInterface.class)) {
+            rooms.add(i);
         }
+
+        Collections.sort(rooms);
+    }
+
+    /**
+     * Get registered rooms
+     *
+     * @return List of rooms
+     */
+    public List<RoomInterface> getRooms() {
+        return rooms;
     }
 }

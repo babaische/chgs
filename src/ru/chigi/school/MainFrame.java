@@ -36,6 +36,7 @@ import java.awt.event.KeyEvent;
 public class MainFrame extends JFrame {
 
     private final RoomManager roomManager = new RoomManager();
+    private final WidgetManager widgetManager = new WidgetManager();
 
     public MainFrame() {
         setTitle("Chigi guitar school");
@@ -170,34 +171,21 @@ public class MainFrame extends JFrame {
         JToolBar tb = new JToolBar();
         tb.setFloatable(false);
 
-        JButton hall = new JButton(new ImageIcon(getClass().getResource("/ru/chigi/school/hall/resources/hall32.png")));
-        hall.setToolTipText("Hall");
+        // Add rooms
+        for(RoomInterface room : roomManager.getRooms()) {
+            JButton button = new JButton(room.getRoomIcon32());
+            button.setToolTipText(room.getRoomDescription());
+            tb.add(button);
+        }
 
-        JButton rooms = new JButton(new ImageIcon(getClass()
-                .getResource("/ru/chigi/school/classroom/resources/classroom32.png")));
-        rooms.setToolTipText("Classroom");
-
-        JButton nt = new JButton(new ImageIcon(getClass().getResource("/ru/chigi/school/nt/resources/nt32.png")));
-        rooms.setToolTipText("Note trainer");
-
-        tb.add(hall);
-        tb.add(rooms);
-        tb.add(nt);
         tb.addSeparator();
 
-        JButton news = new JButton(new ImageIcon(getClass().getResource("/ru/chigi/school/news/resources/news32.png")));
-        news.setToolTipText("News");
-
-        JButton metronome = new JButton(new ImageIcon(getClass()
-                .getResource("/ru/chigi/school/metronome/resources/metronome32.png")));
-        metronome.setToolTipText("Metronome");
-
-        JButton log = new JButton(new ImageIcon(getClass().getResource("/ru/chigi/school/log/resources/log32.png")));
-        log.setToolTipText("Log");
-
-        tb.add(news);
-        tb.add(metronome);
-        tb.add(log);
+        // Add widgets
+        for(WidgetInterface widget : widgetManager.getWidgets()) {
+            JButton button = new JButton(widget.getWidgetIcon32());
+            button.setToolTipText(widget.getWidgetDescription());
+            tb.add(button);
+        }
 
         return tb;
     }
