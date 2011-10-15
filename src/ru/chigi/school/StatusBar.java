@@ -17,11 +17,14 @@
  */
 package ru.chigi.school;
 
+import ru.chigi.school.log.LogStatusBarIcon;
+
 import javax.swing.*;
 import javax.swing.border.EtchedBorder;
 
 public class StatusBar extends JPanel {
-    private final JLabel msg = new JLabel("STATUS BAR");
+    private final JLabel msg = new JLabel("");
+    private final LogStatusBarIcon logIconLog = LogStatusBarIcon.getInstance();
 
     public StatusBar() {
         super();
@@ -30,5 +33,7 @@ public class StatusBar extends JPanel {
         setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
 
         add(msg);
+        add(Box.createHorizontalGlue());
+        add(logIconLog);
     }
 }

@@ -18,11 +18,12 @@
 
 package ru.chigi.school.classroom;
 
+import ru.chigi.school.AbstractRoom;
 import ru.chigi.school.RoomInterface;
 
 import javax.swing.*;
 
-public class ClassRoom extends JPanel implements RoomInterface {
+public class ClassRoom extends AbstractRoom {
 
     @Override
     public String getRoomName() {
@@ -47,10 +48,5 @@ public class ClassRoom extends JPanel implements RoomInterface {
     @Override
     public int getRoomPriority() {
         return 10;
-    }
-
-    @Override
-    public int compareTo(RoomInterface other) {
-        return this.getRoomPriority() - other.getRoomPriority();
     }
 }

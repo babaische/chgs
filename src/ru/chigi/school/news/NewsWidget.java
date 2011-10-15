@@ -18,13 +18,13 @@
 
 package ru.chigi.school.news;
 
+import ru.chigi.school.AbstractWidget;
 import ru.chigi.school.RoomInterface;
 import ru.chigi.school.WidgetInterface;
 
 import javax.swing.*;
 
-public class NewsWidget extends JFrame implements WidgetInterface {
-
+public class NewsWidget extends AbstractWidget {
     @Override
     public String getWidgetName() {
         return "News";
@@ -48,10 +48,5 @@ public class NewsWidget extends JFrame implements WidgetInterface {
     @Override
     public int getWidgetPriority() {
         return 0;
-    }
-
-    @Override
-    public int compareTo(WidgetInterface other) {
-        return this.getWidgetPriority() - other.getWidgetPriority();
     }
 }

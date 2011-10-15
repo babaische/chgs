@@ -45,6 +45,18 @@ public interface WidgetInterface extends Comparable<WidgetInterface> {
     public ImageIcon getWidgetIcon32();
 
     /**
+     * Whether to show this widget's icon in main menu
+     * @return
+     */
+    public boolean showInMenu();
+
+    /**
+     * Whether to show this widget's icon on toolbar
+     * @return
+     */
+    public boolean showOnToolbar();
+
+    /**
      * Widget's priority determine its position in menu/toolbar
      * @return Priority index
      */

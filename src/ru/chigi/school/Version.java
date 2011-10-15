@@ -15,35 +15,34 @@
  You should have received a copy of the GNU General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package ru.chigi.school.nt;
+package ru.chigi.school;
 
-import ru.chigi.school.AbstractRoom;
+import java.net.URL;
 
-import javax.swing.*;
+public class Version {
+    private static final String strVersion = "0.1";
+    private static final int intVersion = 1;
+    private static final String appName = "chgs";
+    private static final String appDescription = "A multimedia platform for 4igi guitar school";
+    private static final String homepage =  "http://school.4igi.ru";
 
-public class NtRoom extends AbstractRoom {
-    @Override
-    public String getRoomName() {
-        return "NT";
+    public static String getStrVersion() {
+        return strVersion;
     }
 
-    @Override
-    public String getRoomDescription() {
-        return "Notes trainer";
+    public static int getIntVersion() {
+        return intVersion;
     }
 
-    @Override
-    public ImageIcon getRoomIcon16() {
-        return new ImageIcon(getClass().getResource("/ru/chigi/school/nt/resources/nt16.png"));
+    public static String getAppName() {
+        return appName;
     }
 
-    @Override
-    public ImageIcon getRoomIcon32() {
-        return new ImageIcon(getClass().getResource("/ru/chigi/school/nt/resources/nt32.png"));
+    public static String getAppDescription() {
+        return appDescription;
     }
 
-    @Override
-    public int getRoomPriority() {
-        return 20;
+    public static String getHomepage() {
+        return homepage;
     }
 }

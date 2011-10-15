@@ -50,6 +50,18 @@ public interface RoomInterface extends Comparable<RoomInterface> {
     public ImageIcon getRoomIcon32();
 
     /**
+     * Whether to show this rooms's icon in main menu
+     * @return
+     */
+    public boolean showInMenu();
+
+    /**
+     * Whether to show this rooms's icon on toolbar
+     * @return
+     */
+    public boolean showOnToolbar();
+
+    /**
      * Room's priority determine its position in menu/toolbar
      * @return Priority index
      */

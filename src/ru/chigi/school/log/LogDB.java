@@ -15,35 +15,33 @@
  You should have received a copy of the GNU General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package ru.chigi.school.nt;
+package ru.chigi.school.log;
 
-import ru.chigi.school.AbstractRoom;
+import java.util.ArrayDeque;
+import java.util.logging.LogRecord;
 
-import javax.swing.*;
+/**
+ * A static class holding log messages for further processing
+ */
+public class LogDB {
+    private final static int size = 100;
+    private static ArrayDeque<LogRecord> db = new ArrayDeque<LogRecord>(size);
 
-public class NtRoom extends AbstractRoom {
-    @Override
-    public String getRoomName() {
-        return "NT";
+    /**
+     * Insert a new record into db
+     * @param record
+     */
+    public static synchronized void insert(LogRecord record) {
+        if(db.size() == size)
+            db.removeFirst();
+
+        db.addFirst(record);
     }
 
-    @Override
-    public String getRoomDescription() {
-        return "Notes trainer";
-    }
-
-    @Override
-    public ImageIcon getRoomIcon16() {
-        return new ImageIcon(getClass().getResource("/ru/chigi/school/nt/resources/nt16.png"));
-    }
-
-    @Override
-    public ImageIcon getRoomIcon32() {
-        return new ImageIcon(getClass().getResource("/ru/chigi/school/nt/resources/nt32.png"));
-    }
-
-    @Override
-    public int getRoomPriority() {
-        return 20;
+    /**
+     * Clear messages in db
+     */
+    public static void clear() {
+        db.clear();
     }
 }

@@ -16,6 +16,7 @@
  */
 package ru.chigi.school.hall;
 
+import ru.chigi.school.AbstractRoom;
 import ru.chigi.school.RoomInterface;
 
 import javax.swing.*;
@@ -27,7 +28,7 @@ import java.net.URL;
  * Top component which displays something.
  */
 
-public final class HallRoom extends JPanel implements RoomInterface {
+public final class HallRoom extends AbstractRoom {
     private javax.swing.JScrollPane WelcomeScroll;
     private javax.swing.JTextPane WelcomeTextPane;
     //private ru.chigi.school.vplayer.VPlayer player;
@@ -120,10 +121,5 @@ public final class HallRoom extends JPanel implements RoomInterface {
     @Override
     public int getRoomPriority() {
         return 0;
-    }
-
-    @Override
-    public int compareTo(RoomInterface other) {
-        return this.getRoomPriority() - other.getRoomPriority();
     }
 }

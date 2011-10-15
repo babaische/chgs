@@ -18,12 +18,12 @@
 
 package ru.chigi.school.log;
 
+import ru.chigi.school.AbstractWidget;
 import ru.chigi.school.WidgetInterface;
 
 import javax.swing.*;
 
-public class LogWidget extends JFrame implements WidgetInterface {
-
+public class LogWidget extends AbstractWidget {
     @Override
     public String getWidgetName() {
         return "Log";
@@ -45,12 +45,12 @@ public class LogWidget extends JFrame implements WidgetInterface {
     }
 
     @Override
-    public int getWidgetPriority() {
-        return 20;
+    public boolean showOnToolbar() {
+        return false;
     }
 
     @Override
-    public int compareTo(WidgetInterface other) {
-        return this.getWidgetPriority() - other.getWidgetPriority();
+    public int getWidgetPriority() {
+        return 20;
     }
 }

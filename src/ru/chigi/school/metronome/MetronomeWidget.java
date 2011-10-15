@@ -18,11 +18,12 @@
 
 package ru.chigi.school.metronome;
 
+import ru.chigi.school.AbstractWidget;
 import ru.chigi.school.WidgetInterface;
 
 import javax.swing.*;
 
-public class MetronomeWidget extends JFrame implements WidgetInterface {
+public class MetronomeWidget extends AbstractWidget {
 
     @Override
     public String getWidgetName() {
@@ -47,10 +48,5 @@ public class MetronomeWidget extends JFrame implements WidgetInterface {
     @Override
     public int getWidgetPriority() {
         return 10;
-    }
-
-    @Override
-    public int compareTo(WidgetInterface other) {
-        return this.getWidgetPriority() - other.getWidgetPriority();
     }
 }

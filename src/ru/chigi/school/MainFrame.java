@@ -22,6 +22,8 @@
  */
 package ru.chigi.school;
 
+import ru.chigi.school.log.Log;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -100,7 +102,7 @@ public class MainFrame extends JFrame {
                 new ImageIcon(getClass().getResource("/ru/chigi/school/settings/resources/settings16.png")));
         settings.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
-                return;
+                Log.getDefault().warning("TEST MESSAGE");
             }
         });
 
@@ -121,37 +123,28 @@ public class MainFrame extends JFrame {
         JMenu roomsMenu = new JMenu("Rooms");
         roomsMenu.setMnemonic(KeyEvent.VK_R);
 
-        JMenuItem hall = new JMenuItem("Hall",
-                new ImageIcon(getClass().getResource("/ru/chigi/school/hall/resources/hall16.png")));
+        for(RoomInterface room : roomManager.getRooms()) {
+            if(!room.showInMenu())
+                continue;
 
-        JMenuItem classroom = new JMenuItem("Classroom",
-                new ImageIcon(getClass().getResource("/ru/chigi/school/classroom/resources/classroom16.png")));
+            JMenuItem item = new JMenuItem(room.getRoomName(), room.getRoomIcon16());
+            roomsMenu.add(item);
+        }
 
-        JMenuItem nt = new JMenuItem("Note trainer",
-                new ImageIcon(getClass().getResource("/ru/chigi/school/nt/resources/nt16.png")));
-
-        roomsMenu.add(hall);
-        roomsMenu.add(classroom);
-        roomsMenu.add(nt);
         menuBar.add(roomsMenu);
 
         /** Widgets menu **/
         JMenu widgetsMenu = new JMenu("Widgets");
         widgetsMenu.setMnemonic(KeyEvent.VK_W);
 
-        JMenuItem news = new JMenuItem("News",
-                new ImageIcon(getClass().getResource("/ru/chigi/school/news/resources/news16.png")));
+        for(WidgetInterface widget : widgetManager.getWidgets()) {
+            if(!widget.showInMenu())
+                continue;
 
-        JMenuItem metronome = new JMenuItem("Metronome",
-                new ImageIcon(getClass().getResource("/ru/chigi/school/metronome/resources/metronome16.png")));
+            JMenuItem item = new JMenuItem(widget.getWidgetName(), widget.getWidgetIcon16());
+            widgetsMenu.add(item);
+        }
 
-        JMenuItem log = new JMenuItem("Messages",
-                new ImageIcon(getClass().getResource("/ru/chigi/school/log/resources/log16.png")));
-
-        widgetsMenu.add(news);
-        widgetsMenu.add(metronome);
-        widgetsMenu.addSeparator();
-        widgetsMenu.add(log);
         menuBar.add(widgetsMenu);
 
         /** Help menu **/
@@ -173,6 +166,9 @@ public class MainFrame extends JFrame {
 
         // Add rooms
         for(RoomInterface room : roomManager.getRooms()) {
+            if(!room.showOnToolbar())
+                continue;
+
             JButton button = new JButton(room.getRoomIcon32());
             button.setToolTipText(room.getRoomDescription());
             tb.add(button);
@@ -182,6 +178,9 @@ public class MainFrame extends JFrame {
 
         // Add widgets
         for(WidgetInterface widget : widgetManager.getWidgets()) {
+            if(!widget.showOnToolbar())
+                continue;
+
             JButton button = new JButton(widget.getWidgetIcon32());
             button.setToolTipText(widget.getWidgetDescription());
             tb.add(button);
