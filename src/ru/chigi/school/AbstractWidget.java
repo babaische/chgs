@@ -36,6 +36,16 @@ public abstract class AbstractWidget extends JFrame implements WidgetInterface {
         return true;
     }
 
+    @Override
+    public void showWidget() {
+        setVisible(true);
+    }
+
+    @Override
+    public void hideWidget() {
+        setVisible(false);
+    }
+
     public int compareTo(WidgetInterface other) {
         return this.getWidgetPriority() - other.getWidgetPriority();
     }

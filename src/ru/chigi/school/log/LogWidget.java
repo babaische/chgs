@@ -24,6 +24,18 @@ import ru.chigi.school.WidgetInterface;
 import javax.swing.*;
 
 public class LogWidget extends AbstractWidget {
+    public LogWidget() {
+        super();
+
+        setTitle("Log messages");
+
+        add(new JButton("LOGGER"));
+
+        pack();
+        setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+        setLocationRelativeTo(getRootPane());
+    }
+
     @Override
     public String getWidgetName() {
         return "Log";

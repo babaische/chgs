@@ -17,7 +17,11 @@
  */
 package ru.chigi.school.log;
 
+import ru.chigi.school.WidgetManager;
+
 import javax.swing.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class LogStatusBarIcon extends JLabel {
     private ImageIcon icon;
@@ -26,8 +30,6 @@ public class LogStatusBarIcon extends JLabel {
     private final ImageIcon warning = new ImageIcon(getClass().getResource("/ru/chigi/school/log/resources/warning.png"));
     private final ImageIcon info = new ImageIcon(getClass().getResource("/ru/chigi/school/log/resources/info.png"));
 
-    private static LogStatusBarIcon instance = null;
-
     public static enum Icon {
         INACTIVE,
         ERROR,
@@ -35,20 +37,22 @@ public class LogStatusBarIcon extends JLabel {
         INFO
     };
 
-    public static LogStatusBarIcon getInstance() {
-       if(instance == null)
-           instance = new LogStatusBarIcon();
-
-        return instance;
-    }
-
-    private LogStatusBarIcon() {
+    public LogStatusBarIcon() {
         super();
 
         // Default icon
         icon = inactive;
 
         setIcon(icon);
+
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent mouseEvent) {
+                deactivate();
+
+                WidgetManager.getDefault().getWidget(LogWidget.class).showWidget();
+            }
+        });
     }
 
     /**
@@ -72,6 +76,15 @@ public class LogStatusBarIcon extends JLabel {
                 break;
         }
 
+        setToolTipText("New messages have appeared");
         setIcon(icon);
+    }
+
+    /**
+     * Deactivate icon
+     */
+    public void deactivate() {
+        setToolTipText("");
+        setIcon(Icon.INACTIVE);
     }
 }

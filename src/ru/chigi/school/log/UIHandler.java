@@ -17,6 +17,8 @@
  */
 package ru.chigi.school.log;
 
+import ru.chigi.school.StatusBar;
+
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
@@ -28,18 +30,21 @@ import java.util.logging.LogRecord;
 public class UIHandler extends Handler {
     @Override
     public void publish(LogRecord logRecord) {
-        LogDB.insert(logRecord);
+        try {
+            LogDB.insert(logRecord);
 
-        Level level = logRecord.getLevel();
+            Level level = logRecord.getLevel();
 
-        LogStatusBarIcon.getInstance().setToolTipText("New messages have appeared");
+            StatusBar sb = StatusBar.getDefault();
 
-        if(level.equals(Level.SEVERE))
-            LogStatusBarIcon.getInstance().setIcon(LogStatusBarIcon.Icon.ERROR);
-        else if(level.equals(Level.WARNING))
-            LogStatusBarIcon.getInstance().setIcon(LogStatusBarIcon.Icon.WARNING);
-        else if(level.equals(Level.INFO))
-            LogStatusBarIcon.getInstance().setIcon(LogStatusBarIcon.Icon.INFO);
+            if(level.equals(Level.SEVERE))
+                sb.setLogIcon(LogStatusBarIcon.Icon.ERROR);
+            else if(level.equals(Level.WARNING))
+                sb.setLogIcon(LogStatusBarIcon.Icon.WARNING);
+            else if(level.equals(Level.INFO))
+                sb.setLogIcon(LogStatusBarIcon.Icon.INFO);
+        }
+        catch (Exception e) {}
     }
 
     @Override

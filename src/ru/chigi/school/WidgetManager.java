@@ -32,13 +32,13 @@ import java.util.ServiceLoader;
  */
 public class WidgetManager {
     private List<WidgetInterface> widgets = new ArrayList<WidgetInterface>();
+    private static WidgetManager instance = null;
 
-    public WidgetManager() {
-        for(WidgetInterface i : ServiceLoader.load(WidgetInterface.class)) {
-            widgets.add(i);
-        }
+    public static WidgetManager getDefault() {
+        if(instance == null)
+            instance = new WidgetManager();
 
-        Collections.sort(widgets);
+        return instance;
     }
 
     /**
@@ -48,5 +48,28 @@ public class WidgetManager {
      */
     public List<WidgetInterface> getWidgets() {
         return widgets;
+    }
+
+    /**
+     * Get widget instance by class
+     * @param widgetClass Widget class
+     * @return Widget instance or null
+     */
+
+    public WidgetInterface getWidget(Class widgetClass) {
+        for(WidgetInterface w : widgets) {
+            if(w.getClass() == widgetClass)
+                return w;
+        }
+
+        return null;
+    }
+
+    private WidgetManager() {
+        for(WidgetInterface i : ServiceLoader.load(WidgetInterface.class)) {
+            widgets.add(i);
+        }
+
+        Collections.sort(widgets);
     }
 }

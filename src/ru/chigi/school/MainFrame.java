@@ -38,7 +38,6 @@ import java.awt.event.KeyEvent;
 public class MainFrame extends JFrame {
 
     private final RoomManager roomManager = new RoomManager();
-    private final WidgetManager widgetManager = new WidgetManager();
 
     public MainFrame() {
         setTitle("Chigi guitar school");
@@ -47,7 +46,7 @@ public class MainFrame extends JFrame {
         setJMenuBar(initMenu());
         add(initToolbar(), BorderLayout.PAGE_START);
         add(initWorkspace(), BorderLayout.CENTER);
-        add(new StatusBar(), BorderLayout.PAGE_END);
+        add(StatusBar.getDefault(), BorderLayout.PAGE_END);
 
         pack();
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -69,13 +68,13 @@ public class MainFrame extends JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(MainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            Log.getDefault().warning(ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(MainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            Log.getDefault().warning(ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(MainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            Log.getDefault().warning(ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(MainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            Log.getDefault().warning(ex);
         }
 
         /* Create and display the form */
@@ -137,7 +136,7 @@ public class MainFrame extends JFrame {
         JMenu widgetsMenu = new JMenu("Widgets");
         widgetsMenu.setMnemonic(KeyEvent.VK_W);
 
-        for(WidgetInterface widget : widgetManager.getWidgets()) {
+        for(WidgetInterface widget : WidgetManager.getDefault().getWidgets()) {
             if(!widget.showInMenu())
                 continue;
 
@@ -177,7 +176,7 @@ public class MainFrame extends JFrame {
         tb.addSeparator();
 
         // Add widgets
-        for(WidgetInterface widget : widgetManager.getWidgets()) {
+        for(WidgetInterface widget : WidgetManager.getDefault().getWidgets()) {
             if(!widget.showOnToolbar())
                 continue;
 

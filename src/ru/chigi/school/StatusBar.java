@@ -24,16 +24,33 @@ import javax.swing.border.EtchedBorder;
 
 public class StatusBar extends JPanel {
     private final JLabel msg = new JLabel("");
-    private final LogStatusBarIcon logIconLog = LogStatusBarIcon.getInstance();
+    private final LogStatusBarIcon logIcon;
+    private static StatusBar instance = null;
 
-    public StatusBar() {
+    /**
+     * Static constructor
+     * @return StatusBar instance
+     */
+    public static StatusBar getDefault() {
+        if(instance == null)
+            instance = new StatusBar();
+
+        return instance;
+    }
+
+    public void setLogIcon(LogStatusBarIcon.Icon icon) {
+        logIcon.setIcon(icon);
+    }
+
+    private StatusBar() {
         super();
 
         setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
         setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
+        logIcon = new LogStatusBarIcon();
 
         add(msg);
         add(Box.createHorizontalGlue());
-        add(logIconLog);
+        add(logIcon);
     }
 }

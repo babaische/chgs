@@ -34,11 +34,20 @@ public class Log {
      * @return Log instance
      */
     public static Log getDefault() {
-        if(instance == null)
+        if(instance == null) {
             instance = new Log();
+            logger.addHandler(new UIHandler());
+        }
 
-        logger.addHandler(new UIHandler());
         return instance;
+    }
+
+    /**
+     * Log severe message
+     * @param e Exception instance
+     */
+    public void severe(Exception e) {
+        severe(e.toString());
     }
 
     /**
@@ -60,6 +69,14 @@ public class Log {
 
     /**
      * Log warning message
+     * @param e Exception instance
+     */
+    public void warning(Exception e) {
+        warning(e.toString());
+    }
+
+    /**
+     * Log warning message
      * @param message Message string
      */
     public void warning(String message) {
@@ -77,6 +94,13 @@ public class Log {
 
     /**
      * Log info message
+     * @param e Exception instance
+     */
+    public void info(Exception e) {
+        info(e.toString());
+    }
+    /**
+     * Log info message
      * @param message Message string
      */
     public void info(String message) {
@@ -92,6 +116,13 @@ public class Log {
         logger.info(String.format(fmt, args));
     }
 
+    /**
+     * Log config message
+     * @param e Exception instance
+     */
+    public void config(Exception e) {
+        config(e.toString());
+    }
     /**
      * Log config message
      * @param message Message string

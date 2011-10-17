@@ -57,6 +57,16 @@ public interface WidgetInterface extends Comparable<WidgetInterface> {
     public boolean showOnToolbar();
 
     /**
+     * Show widget frame
+     */
+    public void showWidget();
+
+    /**
+     * Hide widget frame
+     */
+    public void hideWidget();
+
+    /**
      * Widget's priority determine its position in menu/toolbar
      * @return Priority index
      */
