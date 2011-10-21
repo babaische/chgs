@@ -22,13 +22,14 @@ import ru.chigi.school.WidgetManager;
 import javax.swing.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.logging.Level;
 
 public class LogStatusBarIcon extends JLabel {
     private ImageIcon icon;
-    private final ImageIcon inactive = new ImageIcon(getClass().getResource("/ru/chigi/school/log/resources/inactive.png"));
-    private final ImageIcon error = new ImageIcon(getClass().getResource("/ru/chigi/school/log/resources/error.png"));
-    private final ImageIcon warning = new ImageIcon(getClass().getResource("/ru/chigi/school/log/resources/warning.png"));
-    private final ImageIcon info = new ImageIcon(getClass().getResource("/ru/chigi/school/log/resources/info.png"));
+    private static final ImageIcon inactive = new ImageIcon(Class.class.getResource("/ru/chigi/school/log/resources/inactive.png"));
+    private static final ImageIcon error = new ImageIcon(Class.class.getResource("/ru/chigi/school/log/resources/error.png"));
+    private static final ImageIcon warning = new ImageIcon(Class.class.getResource("/ru/chigi/school/log/resources/warning.png"));
+    private static final ImageIcon info = new ImageIcon(Class.class.getResource("/ru/chigi/school/log/resources/info.png"));
 
     public static enum Icon {
         INACTIVE,
@@ -53,6 +54,22 @@ public class LogStatusBarIcon extends JLabel {
                 WidgetManager.getDefault().getWidget(LogWidget.class).showWidget();
             }
         });
+    }
+
+    /**
+     * Get icon by log level
+     * @param level
+     * @return level icon
+     */
+    public static ImageIcon getIcon(Level level) {
+        if(level.equals(Level.SEVERE))
+            return error;
+        else if(level.equals(Level.WARNING))
+            return warning;
+        else if(level.equals(Level.INFO))
+            return info;
+        else
+            return inactive;
     }
 
     /**

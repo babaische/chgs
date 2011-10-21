@@ -24,12 +24,15 @@ import ru.chigi.school.WidgetInterface;
 import javax.swing.*;
 
 public class LogWidget extends AbstractWidget {
+    private LogTable table;
+
     public LogWidget() {
         super();
 
+        table = new LogTable();
         setTitle("Log messages");
 
-        add(new JButton("LOGGER"));
+        add(table);
 
         pack();
         setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);

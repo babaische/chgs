@@ -18,6 +18,8 @@
 package ru.chigi.school.log;
 
 import java.util.ArrayDeque;
+import java.util.Collection;
+import java.util.Deque;
 import java.util.logging.LogRecord;
 
 /**
@@ -33,9 +35,25 @@ public class LogDB {
      */
     public static synchronized void insert(LogRecord record) {
         if(db.size() == size)
-            db.removeFirst();
+            db.removeLast();
 
         db.addFirst(record);
+    }
+
+    /**
+     * DB size
+     * @return size
+     */
+    public static int size() {
+        return db.size();
+    }
+
+    /**
+     * Get messages
+     * @return Messages as a collection
+     */
+    public static Collection<LogRecord> getMessages() {
+        return db;
     }
 
     /**
