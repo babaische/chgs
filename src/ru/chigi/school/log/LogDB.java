@@ -17,9 +17,7 @@
  */
 package ru.chigi.school.log;
 
-import java.util.ArrayDeque;
-import java.util.Collection;
-import java.util.Deque;
+import java.util.*;
 import java.util.logging.LogRecord;
 
 /**
@@ -28,6 +26,7 @@ import java.util.logging.LogRecord;
 public class LogDB {
     private final static int size = 100;
     private static ArrayDeque<LogRecord> db = new ArrayDeque<LogRecord>(size);
+    private static Set<UpdateSubscriber> subscribers = new HashSet<UpdateSubscriber>();
 
     /**
      * Insert a new record into db
@@ -38,6 +37,9 @@ public class LogDB {
             db.removeLast();
 
         db.addFirst(record);
+
+        for(UpdateSubscriber sub : subscribers)
+            sub.notifyUpdate();
     }
 
     /**
@@ -61,5 +63,14 @@ public class LogDB {
      */
     public static void clear() {
         db.clear();
+    }
+
+    /**
+     * Subscribe to DB updates
+     * @param sub UpdateSubscriber instance
+     */
+    public static void subscribe(UpdateSubscriber sub) {
+        if(!subscribers.contains(sub))
+            subscribers.add(sub);
     }
 }

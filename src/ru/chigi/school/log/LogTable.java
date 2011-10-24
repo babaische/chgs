@@ -18,14 +18,17 @@
 package ru.chigi.school.log;
 
 import javax.swing.*;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 import java.awt.*;
 import java.util.Date;
 import java.util.logging.LogRecord;
 
-public class LogTable extends JPanel {
+public class LogTable extends JPanel implements UpdateSubscriber {
     private JTable table;
+    private TableModel model;
 
     public LogTable() {
         final String colNames[] = {
@@ -34,7 +37,7 @@ public class LogTable extends JPanel {
                 "Message"
         };
 
-        TableModel model = new AbstractTableModel() {
+        model = new AbstractTableModel() {
             private Object[][] db2Array() {
                 Object[][] array = new Object[getRowCount()][getColumnCount()];
 
@@ -85,5 +88,13 @@ public class LogTable extends JPanel {
 
         JScrollPane scrollPane = new JScrollPane(table);
         add(scrollPane);
+
+        LogDB.subscribe(this);
+    }
+
+    public void notifyUpdate() {
+        ((AbstractTableModel)table.getModel()).fireTableDataChanged();
+        table.revalidate();
+        table.repaint();
     }
 }

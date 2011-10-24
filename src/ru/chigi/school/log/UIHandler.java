@@ -18,6 +18,7 @@
 package ru.chigi.school.log;
 
 import ru.chigi.school.StatusBar;
+import ru.chigi.school.WidgetManager;
 
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -34,7 +35,6 @@ public class UIHandler extends Handler {
             LogDB.insert(logRecord);
 
             Level level = logRecord.getLevel();
-
             StatusBar sb = StatusBar.getDefault();
 
             if(level.equals(Level.SEVERE))
