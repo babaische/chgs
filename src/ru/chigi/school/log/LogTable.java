@@ -20,8 +20,7 @@ package ru.chigi.school.log;
 import javax.swing.*;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableModel;
+import javax.swing.table.*;
 import java.awt.*;
 import java.util.Date;
 import java.util.logging.LogRecord;
@@ -31,11 +30,23 @@ public class LogTable extends JPanel implements UpdateSubscriber {
     private TableModel model;
 
     public LogTable() {
-        final String colNames[] = {
-                "Level",
-                "Date",
-                "Message"
-        };
+        final int levelColWidth = 50;
+        TableColumn levelCol = new TableColumn(0);
+        levelCol.setHeaderValue("Level");
+        levelCol.setMinWidth(levelColWidth);
+        levelCol.setMaxWidth(levelColWidth);
+        levelCol.setPreferredWidth(levelColWidth);
+
+        TableColumn dateCol = new TableColumn(1);
+        dateCol.setHeaderValue("Date");
+
+        TableColumn msgCol = new TableColumn(2);
+        msgCol.setHeaderValue("Message");
+
+        TableColumnModel colModel = new DefaultTableColumnModel();
+        colModel.addColumn(levelCol);
+        colModel.addColumn(dateCol);
+        colModel.addColumn(msgCol);
 
         model = new AbstractTableModel() {
             private Object[][] db2Array() {
@@ -62,7 +73,7 @@ public class LogTable extends JPanel implements UpdateSubscriber {
 
             @Override
             public int getColumnCount() {
-                return colNames.length;
+                return 3;
             }
 
             @Override
@@ -82,6 +93,7 @@ public class LogTable extends JPanel implements UpdateSubscriber {
         };
 
         table = new JTable(model);
+        table.setColumnModel(colModel);
         table.setPreferredScrollableViewportSize(new Dimension(400, 100));
         table.setFillsViewportHeight(true);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
