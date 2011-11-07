@@ -17,7 +17,10 @@
  */
 package ru.chigi.school.log;
 
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.LogRecord;
 
 /**

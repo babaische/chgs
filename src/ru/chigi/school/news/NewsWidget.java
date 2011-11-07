@@ -19,8 +19,6 @@
 package ru.chigi.school.news;
 
 import ru.chigi.school.AbstractWidget;
-import ru.chigi.school.RoomInterface;
-import ru.chigi.school.WidgetInterface;
 
 import javax.swing.*;
 

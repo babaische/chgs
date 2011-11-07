@@ -17,8 +17,6 @@
  */
 package ru.chigi.school;
 
-import java.net.URL;
-
 public class Version {
     private static final String strVersion = "0.1";
     private static final int intVersion = 1;

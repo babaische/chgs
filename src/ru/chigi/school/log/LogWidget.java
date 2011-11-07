@@ -19,7 +19,6 @@
 package ru.chigi.school.log;
 
 import ru.chigi.school.AbstractWidget;
-import ru.chigi.school.WidgetInterface;
 
 import javax.swing.*;
 

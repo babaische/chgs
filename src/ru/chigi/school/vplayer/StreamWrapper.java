@@ -24,13 +24,15 @@ import java.io.OutputStream;
  * From http://berry120.blogspot.com/2011/07/using-vlcj-for-video-reliably-with-out.html
  */
 public class StreamWrapper {
-
     private InputStream inputStream;
     private OutputStream outputStream;
 
-    StreamWrapper(InputStream inputStream, OutputStream outputStream) {
+    private InputStream errStream;
+
+    StreamWrapper(InputStream inputStream, OutputStream outputStream, InputStream errStream) {
         this.inputStream = inputStream;
         this.outputStream = outputStream;
+        this.errStream = errStream;
     }
 
     public InputStream getInputStream() {
@@ -39,6 +41,10 @@ public class StreamWrapper {
 
     public OutputStream getOutputStream() {
         return outputStream;
+    }
+
+    public InputStream getErrStream() {
+        return errStream;
     }
 }
 

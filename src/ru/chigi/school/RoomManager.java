@@ -18,7 +18,6 @@
 
 package ru.chigi.school;
 
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -28,7 +27,7 @@ import java.util.ServiceLoader;
  * Dispatch visible rooms in main frame
  * @author Max E. Kuznecov <mek@mek.uz.ua>
  */
-public class RoomManager extends JTabbedPane{
+public class RoomManager {
     private List<RoomInterface> rooms = new ArrayList<RoomInterface>();
 
     public RoomManager() {
@@ -48,5 +47,20 @@ public class RoomManager extends JTabbedPane{
      */
     public List<RoomInterface> getRooms() {
         return rooms;
+    }
+
+    /**
+     * Get room instance by class
+     * @param roomClass Room class
+     * @return Room instance or null
+     */
+
+    public RoomInterface getRoom(Class roomClass) {
+        for(RoomInterface r : rooms) {
+            if(r.getClass() == roomClass)
+                return r;
+        }
+
+        return null;
     }
 }

@@ -17,7 +17,7 @@
 package ru.chigi.school.hall;
 
 import ru.chigi.school.AbstractRoom;
-import ru.chigi.school.RoomInterface;
+import ru.chigi.school.vplayer.VPlayer;
 
 import javax.swing.*;
 import java.awt.*;
@@ -25,14 +25,13 @@ import java.io.IOException;
 import java.net.URL;
 
 /**
- * Top component which displays something.
+ * Hall room widget
  */
 
 public final class HallRoom extends AbstractRoom {
     private javax.swing.JScrollPane WelcomeScroll;
     private javax.swing.JTextPane WelcomeTextPane;
-    //private ru.chigi.school.vplayer.VPlayer player;
-    private JPanel player;
+    private ru.chigi.school.vplayer.VPlayer player;
 
     public HallRoom() {
         initComponents();
@@ -50,10 +49,9 @@ public final class HallRoom extends AbstractRoom {
         WelcomeScroll = new javax.swing.JScrollPane();
         WelcomeTextPane = new javax.swing.JTextPane();
         JLabel logo = new JLabel();
-        //player = new VPlayer.Builder("/tmp/test.avi").build();
-        player = new JPanel();
+        player = new VPlayer.Builder("/tmp/test.avi").build();
 
-        setBackground(java.awt.Color.white);
+        //setBackground(java.awt.Color.white);
         setLayout(new java.awt.GridBagLayout());
 
         // Logo
@@ -73,7 +71,8 @@ public final class HallRoom extends AbstractRoom {
         gridBagConstraints.gridwidth = 1;
         gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 10);
         gridBagConstraints.anchor = java.awt.GridBagConstraints.PAGE_START;
-        player.setPreferredSize(new Dimension(384, 288));
+        player.setPreferredSize(new Dimension(450, 354));
+        //player.setPreferredSize(new Dimension(384, 288));
         add(player, gridBagConstraints);
 
         // Text

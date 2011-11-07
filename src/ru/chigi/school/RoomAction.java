@@ -24,8 +24,8 @@ public class RoomAction extends AbstractAction {
     private Workspace workspace;
     private RoomInterface room;
 
-    public RoomAction(RoomInterface room, Workspace workspace) {
-        super(room.getRoomName(), room.getRoomIcon16());
+    public RoomAction(RoomInterface room, Workspace workspace, boolean icon16) {
+        super(room.getRoomName(), icon16 ? room.getRoomIcon16() : room.getRoomIcon32());
 
         this.room = room;
         this.workspace = workspace;

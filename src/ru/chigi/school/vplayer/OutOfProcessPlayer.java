@@ -17,8 +17,11 @@
 package ru.chigi.school.vplayer;
 
 import com.sun.jna.Pointer;
+import ru.chigi.school.log.Log;
 import uk.co.caprica.vlcj.binding.LibVlcFactory;
 import uk.co.caprica.vlcj.binding.internal.libvlc_media_player_t;
+import uk.co.caprica.vlcj.player.MediaPlayer;
+import uk.co.caprica.vlcj.player.MediaPlayerEventAdapter;
 import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 import uk.co.caprica.vlcj.player.embedded.linux.LinuxEmbeddedMediaPlayer;
 import uk.co.caprica.vlcj.player.embedded.mac.MacEmbeddedMediaPlayer;
@@ -28,8 +31,6 @@ import uk.co.caprica.vlcj.runtime.RuntimeUtil;
 import java.awt.*;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Sits out of process so as not to crash the primary VM.
@@ -42,17 +43,16 @@ public class OutOfProcessPlayer {
         try {
             instance = new OutOfProcessPlayer(Integer.parseInt(args[0]));
         } catch (Exception ex) {
-            Logger.getLogger(OutOfProcessPlayer.class.getName()).log(Level.SEVERE, null, ex);
+            Log.getDefault().severe(ex);
         }
     }
-    public OutOfProcessPlayer(final long canvasId) throws Exception {
 
-        //Lifted pretty much out of the VLCJ code
+    public OutOfProcessPlayer(final long canvasId) throws Exception {
         EmbeddedMediaPlayer player;
 
-        System.out.format("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n");
         String[] playerArgs = new String[]{"--no-video-title", "--no-snapshot-preview"};
 
+        // Platform-specific initialization
         if (RuntimeUtil.isNix()) {
             player = new LinuxEmbeddedMediaPlayer(LibVlcFactory.factory().synchronise().log().create().libvlc_new(1, playerArgs), null) {
 
@@ -81,59 +81,107 @@ public class OutOfProcessPlayer {
             };
         } else {
             player = null;
-            // TODO
             System.exit(1);
         }
 
+        MediaPlayerEventAdapter events = new MediaPlayerEventAdapter() {
+            @Override
+            public void playing(MediaPlayer mp) {
+                doNotify("playing");
+            }
+
+            @Override
+            public void paused(MediaPlayer mp) {
+                doNotify("paused");
+            }
+
+            @Override
+            public void stopped(MediaPlayer mp) {
+                doNotify("stopped");
+            }
+
+            @Override
+            public void lengthChanged(MediaPlayer mp, long l) {
+                doNotify(String.format("stopped %d", l));
+            }
+        };
+
+        player.addMediaPlayerEventListener(events);
         player.setVideoSurface(new Canvas());
 
+        loop(player);
+    }
+
+    private void loop(EmbeddedMediaPlayer player) throws Exception {
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
         String inputLine;
-        //Process the input - I know this isn't very OO but it works for now...
 
         while ((inputLine = in.readLine()) != null) {
             if (inputLine.startsWith("open ")) {
                 inputLine = inputLine.substring("open ".length());
                 player.prepareMedia(inputLine);
-            } else if (inputLine.equalsIgnoreCase("play")) {
+            }
+            else if (inputLine.equalsIgnoreCase("play")) {
                 player.play();
-            } else if (inputLine.equalsIgnoreCase("pause")) {
+            }
+            else if (inputLine.equalsIgnoreCase("pause")) {
                 player.pause();
-            } else if (inputLine.equalsIgnoreCase("stop")) {
+            }
+            else if (inputLine.equalsIgnoreCase("stop")) {
                 player.stop();
-            } else if (inputLine.equalsIgnoreCase("playable?")) {
+            }
+            else if (inputLine.equalsIgnoreCase("playable?")) {
                 System.out.println(player.isPlayable());
-            } else if (inputLine.startsWith("setTime ")) {
+            }
+            else if (inputLine.startsWith("setTime ")) {
                 inputLine = inputLine.substring("setTime ".length());
                 player.setTime(Long.parseLong(inputLine));
-            } else if (inputLine.startsWith("setMute ")) {
+            }
+            else if (inputLine.startsWith("setMute ")) {
                 inputLine = inputLine.substring("setMute ".length());
                 player.mute(Boolean.parseBoolean(inputLine));
-            } else if (inputLine.startsWith("setFullScreen ")) {
+            }
+            else if (inputLine.startsWith("setFullScreen ")) {
                 inputLine = inputLine.substring("setFullScreen ".length());
                 player.setFullScreen(Boolean.parseBoolean(inputLine));
-            } else if (inputLine.startsWith("setPosition ")) {
+            }
+            else if (inputLine.startsWith("setPosition ")) {
                 inputLine = inputLine.substring("setPosition ".length());
                 player.setPosition(Float.parseFloat(inputLine));
-            } else if (inputLine.startsWith("setVolume ")) {
+            }
+            else if (inputLine.startsWith("setVolume ")) {
                 inputLine = inputLine.substring("setVolume ".length());
                 player.setVolume(Integer.parseInt(inputLine));
-            } else if (inputLine.equalsIgnoreCase("mute?")) {
+            }
+            else if (inputLine.equalsIgnoreCase("mute?")) {
                 boolean mute = player.isMute();
                 System.out.println(mute);
-            } else if (inputLine.equalsIgnoreCase("length?")) {
+            }
+            else if (inputLine.equalsIgnoreCase("length?")) {
                 long length = player.getLength();
                 System.out.println(length);
-            } else if (inputLine.equalsIgnoreCase("time?")) {
+            }
+            else if (inputLine.equalsIgnoreCase("time?")) {
                 long time = player.getTime();
                 System.out.println(time);
-            } else if (inputLine.equalsIgnoreCase("volume?")) {
+            }
+            else if (inputLine.equalsIgnoreCase("volume?")) {
                 System.out.println(player.getVolume());
-            } else if (inputLine.equalsIgnoreCase("close")) {
+            }
+            else if (inputLine.equalsIgnoreCase("playing?")) {
+                System.out.println(player.isPlaying());
+            }
+            else if (inputLine.equalsIgnoreCase("close")) {
                 System.exit(0);
-            } else {
+            }
+            else {
                 System.out.println("unknown command: ." + inputLine + ".");
             }
         }
+    }
+
+    private void doNotify(String notification) {
+        System.err.println("NOTIFY " + notification);
+        System.err.flush();
     }
 }

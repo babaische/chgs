@@ -19,7 +19,6 @@
 package ru.chigi.school.classroom;
 
 import ru.chigi.school.AbstractRoom;
-import ru.chigi.school.RoomInterface;
 
 import javax.swing.*;
 

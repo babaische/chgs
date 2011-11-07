@@ -18,10 +18,9 @@
 package ru.chigi.school.log;
 
 import javax.swing.*;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import javax.swing.table.*;
 import java.awt.*;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.LogRecord;
 
@@ -31,6 +30,8 @@ public class LogTable extends JPanel implements UpdateSubscriber {
 
     public LogTable() {
         final int levelColWidth = 50;
+        final int dateColWidth = 250;
+
         TableColumn levelCol = new TableColumn(0);
         levelCol.setHeaderValue("Level");
         levelCol.setMinWidth(levelColWidth);
@@ -39,11 +40,13 @@ public class LogTable extends JPanel implements UpdateSubscriber {
 
         TableColumn dateCol = new TableColumn(1);
         dateCol.setHeaderValue("Date");
+        dateCol.setPreferredWidth(dateColWidth);
+        dateCol.setMinWidth(dateColWidth);
 
         TableColumn msgCol = new TableColumn(2);
         msgCol.setHeaderValue("Message");
 
-        TableColumnModel colModel = new DefaultTableColumnModel();
+        final TableColumnModel colModel = new DefaultTableColumnModel();
         colModel.addColumn(levelCol);
         colModel.addColumn(dateCol);
         colModel.addColumn(msgCol);
@@ -51,13 +54,13 @@ public class LogTable extends JPanel implements UpdateSubscriber {
         model = new AbstractTableModel() {
             private Object[][] db2Array() {
                 Object[][] array = new Object[getRowCount()][getColumnCount()];
+                SimpleDateFormat format = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z");
 
                 int r = 0;
-                int c = 0;
 
                 for(LogRecord rec : LogDB.getMessages()) {
                     array[r][0] = LogStatusBarIcon.getIcon(rec.getLevel());
-                    array[r][1] = new Date(rec.getMillis());
+                    array[r][1] = format.format(new Date(rec.getMillis()));
                     array[r][2] = rec.getMessage();
 
                     r++;
@@ -73,7 +76,7 @@ public class LogTable extends JPanel implements UpdateSubscriber {
 
             @Override
             public int getColumnCount() {
-                return 3;
+                return colModel.getColumnCount();
             }
 
             @Override
@@ -93,13 +96,16 @@ public class LogTable extends JPanel implements UpdateSubscriber {
         };
 
         table = new JTable(model);
+        table.getTableHeader().setReorderingAllowed(false);
+        table.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
         table.setColumnModel(colModel);
-        table.setPreferredScrollableViewportSize(new Dimension(400, 100));
+        table.setPreferredScrollableViewportSize(new Dimension(600, 100));
         table.setFillsViewportHeight(true);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
+        setLayout(new BorderLayout());
         JScrollPane scrollPane = new JScrollPane(table);
-        add(scrollPane);
+        add(scrollPane, BorderLayout.CENTER);
 
         LogDB.subscribe(this);
     }

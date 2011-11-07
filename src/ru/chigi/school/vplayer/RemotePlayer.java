@@ -16,6 +16,10 @@
  */
 package ru.chigi.school.vplayer;
 
+import ru.chigi.school.log.Log;
+import sun.jdbc.odbc.JdbcOdbcPreparedStatement;
+import sun.plugin2.ipc.Event;
+
 import java.io.*;
 
 /**
@@ -23,113 +27,113 @@ import java.io.*;
  * From http://berry120.blogspot.com/2011/07/using-vlcj-for-video-reliably-with-out.html
  */
 
-public class RemotePlayer {
-
+public class RemotePlayer implements Runnable {
     private BufferedReader in;
+    private BufferedReader notify;
     private BufferedWriter out;
-    private boolean open;
-    private boolean playing;
-    private boolean paused;
+    private Thread notifyListener = null;
+    private EventsHandler eh = null;
 
-    /**
-     * Internal use only.
-     */
-    RemotePlayer(StreamWrapper wrapper) {
+    RemotePlayer(StreamWrapper wrapper, EventsHandler eh) {
         out = new BufferedWriter(new OutputStreamWriter(wrapper.getOutputStream()));
         in = new BufferedReader(new InputStreamReader(wrapper.getInputStream()));
-        playing = false;
-        open = true;
+        notify = new BufferedReader(new InputStreamReader(wrapper.getErrStream()));
+        this.eh = eh;
+
+        // Start listener thread
+        if(eh != null) {
+            notifyListener = new Thread(this);
+            notifyListener.start();
+        }
     }
 
-    private void writeOut(String command) {
-        if (!open) {
-            throw new IllegalArgumentException("This remote player has been closed!");
-        }
+    /**
+     * Send command to oop player
+     * @param command Command string
+     */
+    private void send(String command) {
         try {
             out.write(command + "\n");
             out.flush();
         }
         catch (IOException ex) {
-            throw new RuntimeException("Couldn't perform operation", ex);
+            Log.getDefault().severe(ex);
         }
     }
 
-    private String getInput() {
+    /**
+     * Receive command from oop player
+     * @return Command read
+     */
+    private String receive() {
         try {
             return in.readLine();
         }
         catch (IOException ex) {
-            throw new RuntimeException("Couldn't perform operation", ex);
+            Log.getDefault().severe(ex);
+            return null;
         }
     }
 
     public void load(String path) {
-        writeOut("open " + path);
+        send("open " + path);
     }
 
     public void play() {
-        writeOut("play");
-        playing = true;
-        paused = false;
+        send("play");
     }
 
     public void pause() {
-        if(!paused) {
-            writeOut("pause");
-            playing = false;
-            paused = true;
-        }
+        send("pause");
     }
 
     public void stop() {
-        writeOut("stop");
-        playing = false;
-        paused = false;
+        send("stop");
     }
 
     public boolean isPlayable() {
-        writeOut("playable?");
-        return Boolean.parseBoolean(getInput());
+        send("playable?");
+        return Boolean.parseBoolean(receive());
     }
 
     public long getLength() {
-        writeOut("length?");
-        return Long.parseLong(getInput());
+        send("length?");
+        return Long.parseLong(receive());
     }
 
     public long getTime() {
-        writeOut("time?");
-        return Long.parseLong(getInput());
+        send("time?");
+        return Long.parseLong(receive());
     }
 
     public int getVolume() {
-        writeOut("volume?");
-        return Integer.parseInt(getInput());
+        send("volume?");
+        return Integer.parseInt(receive());
     }
 
     public void setVolume(int volume) {
-        writeOut("setVolume " + volume);
+        send("setVolume " + volume);
     }
 
     public void setTime(long time) {
-        writeOut("setTime " + time);
+        send("setTime " + time);
     }
 
     public void setPosition(float pos) {
-        writeOut("setPosition " + pos);
+        send("setPosition " + pos);
     }
 
     public boolean getMute() {
-        writeOut("mute?");
-        return Boolean.parseBoolean(getInput());
+        send("mute?");
+        return Boolean.parseBoolean(receive());
     }
 
     public void setMute(boolean mute) {
-        writeOut("setMute " + mute);
+        send("setMute " + mute);
     }
 
     public void setFullScreen(boolean fs) {
-        writeOut("setFullScreen " + fs);
+        send("setFullScreen " + fs);
     }
 
     /**
@@ -137,11 +141,7 @@ public class RemotePlayer {
      * the player won't quit!
      */
     public void close() {
-        if (open) {
-            writeOut("close");
-            playing = false;
-            open = false;
-        }
+        send("close");
     }
 
     /**
@@ -149,14 +149,41 @@ public class RemotePlayer {
      * @return true if its playing, false otherwise.
      */
     public boolean isPlaying() {
-        return playing;
+        send("playing?");
+        return Boolean.parseBoolean(receive());
     }
 
     /**
-     * Determine whether the remote player is paused.
-     * @return true if its paused, false otherwise.
+     * Read oop player notifications from stderr
      */
-    public boolean isPaused() {
-        return paused;
+    @Override
+    public void run() {
+        String line;
+
+        while(true) {
+            try {
+                line = notify.readLine();
+
+                if (line.startsWith("NOTIFY ")) {
+                    line = line.substring("NOTIFY ".length());
+
+                    if(line.equals("playing"))
+                        eh.playing();
+                    else if(line.equals("paused"))
+                        eh.paused();
+                    else if(line.equals("stopped"))
+                        eh.stopped();
+                    else if(line.startsWith("lengthChanged ")) {
+                        eh.lengthChanged(Long.parseLong(line.substring("lengthChanged ".length())));
+                    }
+                }
+                // If not notification, then print in to stderr
+                else
+                    System.err.println(line);
+            }
+            catch (IOException ex) {
+                Log.getDefault().severe(ex);
+            }
+        }
     }
 }

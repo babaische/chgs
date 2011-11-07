@@ -66,4 +66,10 @@ public interface RoomInterface extends Comparable<RoomInterface> {
      * @return Priority index
      */
     public int getRoomPriority();
+
+    /**
+     * Return room's panel
+     * @return Room
+     */
+    public JPanel getRoom();
 }

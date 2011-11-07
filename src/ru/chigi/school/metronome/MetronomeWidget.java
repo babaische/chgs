@@ -19,7 +19,6 @@
 package ru.chigi.school.metronome;
 
 import ru.chigi.school.AbstractWidget;
-import ru.chigi.school.WidgetInterface;
 
 import javax.swing.*;
 

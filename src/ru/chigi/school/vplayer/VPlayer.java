@@ -35,7 +35,7 @@ import java.util.concurrent.TimeUnit;
  *
  * @author Max E. Kuznecov <mek@mek.uz.ua>
  */
-public class VPlayer extends JPanel implements Serializable {
+public class VPlayer extends JPanel implements Serializable, EventsHandler {
     private final static int x11threads = LibX11.INSTANCE.XInitThreads();
     private Canvas canvas;
     private RemotePlayer mediaPlayer;
@@ -104,6 +104,7 @@ public class VPlayer extends JPanel implements Serializable {
         initToolbar();
         initInputMap();
         initProgressSlider();
+        JPopupMenu.setDefaultLightWeightPopupEnabled(false);
 
         setLayoutOptions();
     }
@@ -130,10 +131,6 @@ public class VPlayer extends JPanel implements Serializable {
 
     public void setFullScreen(boolean fs) {
         mediaPlayer.setFullScreen(fs);
-    }
-
-    public String getMediaSource() {
-        return mediaSource;
     }
 
     /**
@@ -194,8 +191,6 @@ public class VPlayer extends JPanel implements Serializable {
      * Init toolbar and all its components
      */
     private void initToolbar() {
-        final VPlayer current = this;
-
         toolbar = new JToolBar();
         toolbar.setFloatable(false);
         toolbar.setRollover(true);
@@ -206,7 +201,6 @@ public class VPlayer extends JPanel implements Serializable {
         playButton.setToolTipText(PLAY_TXT);
         playButton.setFocusable(false);
         playButton.addActionListener(new java.awt.event.ActionListener() {
-
             @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 if(!playerInited) {
@@ -219,11 +213,10 @@ public class VPlayer extends JPanel implements Serializable {
         });
 
         stopButton = new JButton();
-        stopButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ru/chigi/school/vplayer/resources/stop.png"))); // NOI18N
+        stopButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ru/chigi/school/vplayer/resources/stop.png")));
         stopButton.setToolTipText("Stop");
         stopButton.setFocusable(false);
         stopButton.addActionListener(new java.awt.event.ActionListener() {
-
             @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 stop();
@@ -236,7 +229,6 @@ public class VPlayer extends JPanel implements Serializable {
         fullScreenButton.setToolTipText("Toggle fullscreen mode");
         fullScreenButton.setFocusable(false);
         fullScreenButton.addActionListener(new java.awt.event.ActionListener() {
-
             @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 VPlayerCallback cb = new VPlayerCallback() {
@@ -267,7 +259,6 @@ public class VPlayer extends JPanel implements Serializable {
         muteButton.setToolTipText("Toggle mute");
         muteButton.setFocusable(false);
         muteButton.addActionListener(new java.awt.event.ActionListener() {
-
             @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 mediaPlayer.setMute(!mediaPlayer.getMute());
@@ -276,12 +267,10 @@ public class VPlayer extends JPanel implements Serializable {
         });
 
         volumeSlider = new JSlider();
-        volumeSlider.setPreferredSize(new Dimension(10, 10));
         volumeSlider.setMinimum(LibVlcConst.MIN_VOLUME);
         volumeSlider.setMaximum(LibVlcConst.MAX_VOLUME);
         volumeSlider.setToolTipText("Adjust volume");
         volumeSlider.addChangeListener(new ChangeListener() {
-
             @Override
             public void stateChanged(ChangeEvent e) {
                 JSlider src = (JSlider) e.getSource();
@@ -298,7 +287,9 @@ public class VPlayer extends JPanel implements Serializable {
         toolbar.add(stopButton);
         toolbar.add(fullScreenButton);
         toolbar.addSeparator();
+        toolbar.add(Box.createRigidArea(new Dimension(10, 0)));
         toolbar.add(progressLabel);
+        toolbar.add(Box.createRigidArea(new Dimension(10, 0)));
 
         toolbar.add(Box.createHorizontalGlue());
         toolbar.add(volumeSlider);
@@ -309,48 +300,7 @@ public class VPlayer extends JPanel implements Serializable {
      * Prepare media player instance
      */
     private void initPlayer() {
-        final VPlayer current = this;
-
-        mediaPlayerEvents = new MediaPlayerEventAdapter() {
-
-            @Override
-            public void playing(MediaPlayer mp) {
-                volumeSlider.setValue(mediaPlayer.getVolume());
-                playButton.setIcon(iconPause);
-                playButton.setToolTipText(PAUSE_TXT);
-
-                if (callback != null) {
-                    callback.playing(current);
-                }
-            }
-
-            @Override
-            public void paused(MediaPlayer mp) {
-                playButton.setIcon(iconPlay);
-                playButton.setToolTipText(PLAY_TXT);
-            }
-
-            @Override
-            public void stopped(MediaPlayer mp) {
-                paused(mp);
-            }
-
-            @Override
-            public void lengthChanged(MediaPlayer mp, long l) {
-                String txt = String.format("%02d:%02d:%02d",
-                        TimeUnit.MILLISECONDS.toHours(l),
-                        TimeUnit.MILLISECONDS.toMinutes(l) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(l)),
-                        TimeUnit.MILLISECONDS.toSeconds(l) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(l)));
-
-                progressLabel.setText(txt);
-            }
-        };
-
-        JPopupMenu.setDefaultLightWeightPopupEnabled(false);
-
-        mediaPlayer = RemotePlayerFactory.getRemotePlayer(canvas);
-        //mediaPlayer.addMediaPlayerEventListener(mediaPlayerEvents);
-        //mediaPlayer.setVideoSurface(canvas);
+        mediaPlayer = RemotePlayerFactory.getRemotePlayer(canvas, this);
         mediaPlayer.load(mediaSource);
     }
 
@@ -380,7 +330,6 @@ public class VPlayer extends JPanel implements Serializable {
 
         imap.put(KeyStroke.getKeyStroke("SPACE"), "pause_resume");
         amap.put("pause_resume", new AbstractAction() {
-
             @Override
             public void actionPerformed(ActionEvent ae) {
                 togglePlay();
@@ -419,4 +368,37 @@ public class VPlayer extends JPanel implements Serializable {
         opts.fill = java.awt.GridBagConstraints.BOTH;
         add(toolbar, opts);
     }
+
+    @Override
+    public void playing() {
+        volumeSlider.setValue(mediaPlayer.getVolume());
+        playButton.setIcon(iconPause);
+        playButton.setToolTipText(PAUSE_TXT);
+
+        if (callback != null) {
+            callback.playing(this);
+        }
+    }
+
+    @Override
+    public void paused() {
+        playButton.setIcon(iconPlay);
+        playButton.setToolTipText(PLAY_TXT);
+    }
+
+    @Override
+    public void stopped() {
+        paused();
+    }
+
+    @Override
+    public void lengthChanged(long l) {
+        String txt = String.format("%02d:%02d:%02d",
+                TimeUnit.MILLISECONDS.toHours(l),
+                TimeUnit.MILLISECONDS.toMinutes(l) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(l)),
+                TimeUnit.MILLISECONDS.toSeconds(l) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(l)));
+
+        progressLabel.setText(txt);
+    }
+
 }

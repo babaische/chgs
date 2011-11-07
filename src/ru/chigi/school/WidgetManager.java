@@ -1,8 +1,5 @@
 package ru.chigi.school;
 
-import ru.chigi.school.WidgetInterface;
-
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

@@ -76,6 +76,12 @@
       <include name="jre/lib/ext/localedata.jar"/>
       <include name="jre/lib/ext/sunpkcs11.jar"/>
     </fileset>
+
+	 <fileset dir="ext">
+      <include name="jna.jar"/>
+      <include name="platform.jar"/>
+      <include name="vlcj-1.1.5.1.jar"/>
+	 </fileset>
   </path>
   
   <property name="project.jdk.home" value="${jdk.home.1.6}"/>
@@ -158,6 +164,12 @@
 
      <copy todir="${chgs.output.dir}/META-INF">
          <fileset dir="${module.chgs.basedir}/src/META-INF">
+             <type type="file"/>
+         </fileset>
+     </copy>
+
+     <copy todir="${chgs.output.dir}/ext">
+         <fileset dir="${module.chgs.basedir}/ext/">
              <type type="file"/>
          </fileset>
      </copy>

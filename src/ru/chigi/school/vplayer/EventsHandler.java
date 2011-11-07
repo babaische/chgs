@@ -15,28 +15,18 @@
  You should have received a copy of the GNU General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+package ru.chigi.school.vplayer;
 
-package ru.chigi.school;
+public interface EventsHandler {
+    /* Player state change to PLAYING */
+    public void playing();
 
-import javax.swing.*;
-import java.awt.*;
+    /* Player state change to PAUSED */
+    public void paused();
 
-public class Workspace extends JTabbedPane {
-    public Workspace() {
-        super();
+    /* Player state change to STOPPED */
+    public void stopped();
 
-        setPreferredSize(new Dimension(800, 600));
-    }
-
-    public void open(RoomInterface room) {
-        // Check if already open, then just focus
-        int index = indexOfComponent(room.getRoom());
-
-        if(index != -1)
-            setSelectedIndex(index);
-        else {
-            addTab("", room.getRoomIcon16(), room.getRoom(), room.getRoomDescription());
-            setTabComponentAt(getTabCount() - 1, new TabButtonComponent(this, room));
-        }
-    }
+    /* Video position changed */
+    public void lengthChanged(long length);
 }

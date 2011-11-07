@@ -36,16 +36,18 @@ import java.awt.event.KeyEvent;
  * @author Max E. Kuznecov <mek@mek.uz.ua>
  */
 public class MainFrame extends JFrame {
-
     private final RoomManager roomManager = new RoomManager();
+    private Workspace workspace;
 
     public MainFrame() {
         setTitle("Chigi guitar school");
 
+        workspace = new Workspace();
         setLayout(new BorderLayout());
         setJMenuBar(initMenu());
+
         add(initToolbar(), BorderLayout.PAGE_START);
-        add(initWorkspace(), BorderLayout.CENTER);
+        add(workspace, BorderLayout.CENTER);
         add(StatusBar.getDefault(), BorderLayout.PAGE_END);
 
         pack();
@@ -59,7 +61,7 @@ public class MainFrame extends JFrame {
         /* Set the Nimbus look and feel */
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
-         */
+
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
@@ -76,6 +78,7 @@ public class MainFrame extends JFrame {
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
             Log.getDefault().warning(ex);
         }
+        */
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
@@ -127,6 +130,8 @@ public class MainFrame extends JFrame {
                 continue;
 
             JMenuItem item = new JMenuItem(room.getRoomName(), room.getRoomIcon16());
+            item.setAction(new RoomAction(room, workspace, true));
+
             roomsMenu.add(item);
         }
 
@@ -170,6 +175,8 @@ public class MainFrame extends JFrame {
 
             JButton button = new JButton(room.getRoomIcon32());
             button.setToolTipText(room.getRoomDescription());
+            button.setAction(new RoomAction(room, workspace, false));
+            button.setText("");
             tb.add(button);
         }
 
@@ -186,10 +193,6 @@ public class MainFrame extends JFrame {
         }
 
         return tb;
-    }
-
-    private JTabbedPane initWorkspace() {
-        return new JTabbedPane();
     }
 }
 

@@ -18,7 +18,6 @@
 package ru.chigi.school.log;
 
 import ru.chigi.school.StatusBar;
-import ru.chigi.school.WidgetManager;
 
 import java.util.logging.Handler;
 import java.util.logging.Level;

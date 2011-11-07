@@ -36,7 +36,13 @@ public abstract class AbstractRoom extends JPanel implements RoomInterface {
         return true;
     }
 
+    @Override
+    public JPanel getRoom() {
+        return this;
+    }
+
     public int compareTo(RoomInterface other) {
         return this.getRoomPriority() - other.getRoomPriority();
     }
+
 }
