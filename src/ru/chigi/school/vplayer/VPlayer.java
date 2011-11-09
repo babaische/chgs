@@ -17,9 +17,6 @@
 package ru.chigi.school.vplayer;
 
 import uk.co.caprica.vlcj.binding.LibVlcConst;
-import uk.co.caprica.vlcj.binding.LibX11;
-import uk.co.caprica.vlcj.player.MediaPlayer;
-import uk.co.caprica.vlcj.player.MediaPlayerEventAdapter;
 import uk.co.caprica.vlcj.runtime.RuntimeUtil;
 import uk.co.caprica.vlcj.runtime.windows.WindowsCanvas;
 
@@ -32,11 +29,10 @@ import java.io.Serializable;
 import java.util.concurrent.TimeUnit;
 
 /**
- *
+ * Media player wrapper
  * @author Max E. Kuznecov <mek@mek.uz.ua>
  */
 public class VPlayer extends JPanel implements Serializable, EventsHandler {
-    private final static int x11threads = LibX11.INSTANCE.XInitThreads();
     private Canvas canvas;
     private RemotePlayer mediaPlayer;
     private JToolBar toolbar;
@@ -51,6 +47,7 @@ public class VPlayer extends JPanel implements Serializable, EventsHandler {
     private final Icon iconNotMuted = new ImageIcon(getClass().getResource("/ru/chigi/school/vplayer/resources/not_muted.png"));
     private final Icon iconPlay = new ImageIcon(getClass().getResource("/ru/chigi/school/vplayer/resources/play.png"));
     private final Icon iconPause = new ImageIcon(getClass().getResource("/ru/chigi/school/vplayer/resources/pause.png"));
+    private final Icon iconFS = new ImageIcon(getClass().getResource("/ru/chigi/school/vplayer/resources/fullscreen.png"));
     private JFrame parentFrame;
     private FullScreenFrame fsFrame;
     private boolean allowFullscreen;
@@ -58,7 +55,6 @@ public class VPlayer extends JPanel implements Serializable, EventsHandler {
     private final String PAUSE_TXT = "Pause (SPACE)";
     private VPlayerCallback callback;
     private String mediaSource = null;
-    private MediaPlayerEventAdapter mediaPlayerEvents;
     private boolean playerInited = false;
 
     public static class Builder {
@@ -110,6 +106,8 @@ public class VPlayer extends JPanel implements Serializable, EventsHandler {
     }
 
     public void togglePlay() {
+        ensureInited();
+
         if (mediaPlayer.isPlaying()) {
             pause();
         } else {
@@ -118,19 +116,18 @@ public class VPlayer extends JPanel implements Serializable, EventsHandler {
     }
 
     public void play() {
+        ensureInited();
         mediaPlayer.play();
     }
 
     public void pause() {
+        ensureInited();
         mediaPlayer.pause();
     }
 
     public void stop() {
+        ensureInited();
         mediaPlayer.stop();
-    }
-
-    public void setFullScreen(boolean fs) {
-        mediaPlayer.setFullScreen(fs);
     }
 
     /**
@@ -148,10 +145,12 @@ public class VPlayer extends JPanel implements Serializable, EventsHandler {
     }
 
     /**
-     * Return player state
-     * @return
+     * Get player state
+     * @return player state
      */
     public VPlayerState getState() {
+        ensureInited();
+
         VPlayerState state = new VPlayerState();
 
         state.setMediaSource(mediaSource);
@@ -164,23 +163,13 @@ public class VPlayer extends JPanel implements Serializable, EventsHandler {
 
     /**
      * Restore player state
-     * @param state
+     * @param state Player state
      */
     public void setState(VPlayerState state) {
-        MediaPlayerEventAdapter cb = new MediaPlayerEventAdapter() {
+        ensureInited();
 
-            @Override
-            public void playing(MediaPlayer mp) {
-                mp.removeMediaPlayerEventListener(this);
-                pause();
-            }
-        };
-
-        if (!state.isPlaying()) {
-            //mediaPlayer.addMediaPlayerEventListener(cb);
-        }
-
-        play();
+        if (state.isPlaying())
+            play();
 
         mediaPlayer.setTime(state.getTime());
         mediaPlayer.setVolume(state.getVolume());
@@ -203,11 +192,6 @@ public class VPlayer extends JPanel implements Serializable, EventsHandler {
         playButton.addActionListener(new java.awt.event.ActionListener() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                if(!playerInited) {
-                    initPlayer();
-                    playerInited = true;
-                }
-
                 togglePlay();
             }
         });
@@ -225,28 +209,16 @@ public class VPlayer extends JPanel implements Serializable, EventsHandler {
 
         // Toggle fullscreen button
         fullScreenButton = new JButton();
-        fullScreenButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ru/chigi/school/vplayer/resources/fullscreen.png"))); // NOI18N
+        fullScreenButton.setIcon(iconFS);
         fullScreenButton.setToolTipText("Toggle fullscreen mode");
         fullScreenButton.setFocusable(false);
         fullScreenButton.addActionListener(new java.awt.event.ActionListener() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                VPlayerCallback cb = new VPlayerCallback() {
-
-                    @Override
-                    public void released(VPlayer vp) {
-                    }
-
-                    @Override
-                    public void playing(VPlayer vp) {
-                    }
-                };
-
                 VPlayerState state = getState();
 
-                if (mediaPlayer.isPlaying()) {
-                    pause();
-                }
+                if (mediaPlayer.isPlaying())
+                    stop();
 
                 fsFrame = new FullScreenFrame(state);
             }
@@ -261,6 +233,8 @@ public class VPlayer extends JPanel implements Serializable, EventsHandler {
         muteButton.addActionListener(new java.awt.event.ActionListener() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ensureInited();
+
                 mediaPlayer.setMute(!mediaPlayer.getMute());
                 muteButton.setIcon(mediaPlayer.getMute() ? iconMuted : iconNotMuted);
             }
@@ -273,6 +247,8 @@ public class VPlayer extends JPanel implements Serializable, EventsHandler {
         volumeSlider.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
+                ensureInited();
+
                 JSlider src = (JSlider) e.getSource();
 
                 if (!src.getValueIsAdjusting()) {
@@ -289,7 +265,6 @@ public class VPlayer extends JPanel implements Serializable, EventsHandler {
         toolbar.addSeparator();
         toolbar.add(Box.createRigidArea(new Dimension(10, 0)));
         toolbar.add(progressLabel);
-        toolbar.add(Box.createRigidArea(new Dimension(10, 0)));
 
         toolbar.add(Box.createHorizontalGlue());
         toolbar.add(volumeSlider);
@@ -299,7 +274,12 @@ public class VPlayer extends JPanel implements Serializable, EventsHandler {
     /**
      * Prepare media player instance
      */
-    private void initPlayer() {
+    private void ensureInited() {
+        if(playerInited)
+            return;
+        else
+            playerInited = true;
+
         mediaPlayer = RemotePlayerFactory.getRemotePlayer(canvas, this);
         mediaPlayer.load(mediaSource);
     }
@@ -312,9 +292,10 @@ public class VPlayer extends JPanel implements Serializable, EventsHandler {
         progressSlider.setMaximum(100);
         progressSlider.setToolTipText("Progress time");
         progressSlider.addChangeListener(new ChangeListener() {
-
             @Override
             public void stateChanged(ChangeEvent e) {
+                ensureInited();
+
                 JSlider src = (JSlider) e.getSource();
 
                 if (!src.getValueIsAdjusting()) {

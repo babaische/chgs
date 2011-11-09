@@ -51,7 +51,6 @@ public final class HallRoom extends AbstractRoom {
         JLabel logo = new JLabel();
         player = new VPlayer.Builder("/tmp/test.avi").build();
 
-        //setBackground(java.awt.Color.white);
         setLayout(new java.awt.GridBagLayout());
 
         // Logo

@@ -17,8 +17,6 @@
 package ru.chigi.school.vplayer;
 
 import ru.chigi.school.log.Log;
-import sun.jdbc.odbc.JdbcOdbcPreparedStatement;
-import sun.plugin2.ipc.Event;
 
 import java.io.*;
 
@@ -132,10 +130,6 @@ public class RemotePlayer implements Runnable {
         send("setMute " + mute);
     }
 
-    public void setFullScreen(boolean fs) {
-        send("setFullScreen " + fs);
-    }
-
     /**
      * Terminate the OutOfProcessPlayer. MUST be called before closing, otherwise
      * the player won't quit!
@@ -164,6 +158,9 @@ public class RemotePlayer implements Runnable {
             try {
                 line = notify.readLine();
 
+                if(line == null)
+                    break;
+
                 if (line.startsWith("NOTIFY ")) {
                     line = line.substring("NOTIFY ".length());
 
@@ -177,7 +174,7 @@ public class RemotePlayer implements Runnable {
                         eh.lengthChanged(Long.parseLong(line.substring("lengthChanged ".length())));
                     }
                 }
-                // If not notification, then print in to stderr
+                // If not notification, then print to stderr
                 else
                     System.err.println(line);
             }

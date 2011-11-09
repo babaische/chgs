@@ -54,32 +54,35 @@ public class OutOfProcessPlayer {
 
         // Platform-specific initialization
         if (RuntimeUtil.isNix()) {
-            player = new LinuxEmbeddedMediaPlayer(LibVlcFactory.factory().synchronise().log().create().libvlc_new(1, playerArgs), null) {
-
+            player = new LinuxEmbeddedMediaPlayer(LibVlcFactory.factory().synchronise().log()
+                    .create().libvlc_new(1, playerArgs), null) {
                 @Override
                 protected void nativeSetVideoSurface(libvlc_media_player_t mediaPlayerInstance, Canvas videoSurface) {
                     libvlc.libvlc_media_player_set_xwindow(mediaPlayerInstance, (int) canvasId);
                 }
             };
-        } else if (RuntimeUtil.isWindows()) {
-            player = new WindowsEmbeddedMediaPlayer(LibVlcFactory.factory().synchronise().log().create().libvlc_new(1, playerArgs), null) {
-
+        }
+        else if (RuntimeUtil.isWindows()) {
+            player = new WindowsEmbeddedMediaPlayer(LibVlcFactory.factory().synchronise().log()
+                    .create().libvlc_new(1, playerArgs), null) {
                 @Override
                 protected void nativeSetVideoSurface(libvlc_media_player_t mediaPlayerInstance, Canvas videoSurface) {
                     Pointer ptr = Pointer.createConstant(canvasId);
                     libvlc.libvlc_media_player_set_hwnd(mediaPlayerInstance, ptr);
                 }
             };
-        } else if (RuntimeUtil.isMac()) {
-            player = new MacEmbeddedMediaPlayer(LibVlcFactory.factory().synchronise().log().create().libvlc_new(2, playerArgs), null) {
-
+        }
+        else if (RuntimeUtil.isMac()) {
+            player = new MacEmbeddedMediaPlayer(LibVlcFactory.factory().synchronise().log()
+                    .create().libvlc_new(2, playerArgs), null) {
                 @Override
                 protected void nativeSetVideoSurface(libvlc_media_player_t mediaPlayerInstance, Canvas videoSurface) {
                     Pointer ptr = Pointer.createConstant(canvasId);
                     libvlc.libvlc_media_player_set_nsobject(mediaPlayerInstance, ptr);
                 }
             };
-        } else {
+        }
+        else {
             player = null;
             System.exit(1);
         }
@@ -140,10 +143,6 @@ public class OutOfProcessPlayer {
             else if (inputLine.startsWith("setMute ")) {
                 inputLine = inputLine.substring("setMute ".length());
                 player.mute(Boolean.parseBoolean(inputLine));
-            }
-            else if (inputLine.startsWith("setFullScreen ")) {
-                inputLine = inputLine.substring("setFullScreen ".length());
-                player.setFullScreen(Boolean.parseBoolean(inputLine));
             }
             else if (inputLine.startsWith("setPosition ")) {
                 inputLine = inputLine.substring("setPosition ".length());

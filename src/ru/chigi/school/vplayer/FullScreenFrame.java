@@ -56,7 +56,9 @@ class FullScreenFrame extends JFrame {
         add(player, BorderLayout.CENTER);
         pack();
 
-        player.setFullScreen(true);
+        GraphicsDevice graphicsDevice = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+        graphicsDevice.setFullScreenWindow(this);
+
         player.setState(state);
     }
 
@@ -67,7 +69,6 @@ class FullScreenFrame extends JFrame {
 
         imap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "close");
         amap.put("close", new AbstractAction() {
-
             @Override
             public void actionPerformed(ActionEvent ae) {
                 self.dispatchEvent(new WindowEvent(self, WindowEvent.WINDOW_CLOSING));
