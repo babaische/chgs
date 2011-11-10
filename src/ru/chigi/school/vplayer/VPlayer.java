@@ -397,9 +397,10 @@ public class VPlayer extends JPanel implements EventsHandler, VPlayerCallback {
 
     @Override
     public void playerReleased(VPlayer player) {
-        // Restore state from closed fs player
+        // Show us
         SwingUtilities.windowForComponent(this).setVisible(true);
 
+        // Restore state from closed fs player
         setState(player.getState());
     }
 
