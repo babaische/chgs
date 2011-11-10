@@ -20,6 +20,7 @@ import ru.chigi.school.AbstractRoom;
 import ru.chigi.school.vplayer.VPlayer;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 import java.io.IOException;
 import java.net.URL;
@@ -29,7 +30,6 @@ import java.net.URL;
  */
 
 public final class HallRoom extends AbstractRoom {
-    private javax.swing.JScrollPane WelcomeScroll;
     private javax.swing.JTextPane WelcomeTextPane;
     private ru.chigi.school.vplayer.VPlayer player;
 
@@ -39,61 +39,48 @@ public final class HallRoom extends AbstractRoom {
 
         try {
             WelcomeTextPane.setPage(welcomeText);
-        } catch (IOException ex) {
-        }
+        } catch (IOException ex) {}
     }
 
     private void initComponents() {
-        java.awt.GridBagConstraints gridBagConstraints;
+        setLayout(new BorderLayout());
 
-        WelcomeScroll = new javax.swing.JScrollPane();
-        WelcomeTextPane = new javax.swing.JTextPane();
-        JLabel logo = new JLabel();
-        player = new VPlayer.Builder("/tmp/test.avi").build();
-
-        setLayout(new java.awt.GridBagLayout());
+        // Internal panel
+        JPanel ip = new JPanel();
+        ip.setLayout(new BoxLayout(ip, BoxLayout.Y_AXIS));
 
         // Logo
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.NONE;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.CENTER;
+        JLabel logo = new JLabel();
         logo.setIcon(new ImageIcon(getClass().getResource("/ru/chigi/school/hall/resources/logo.png")));
-        add(logo, gridBagConstraints);
+        logo.setAlignmentX(Component.CENTER_ALIGNMENT);
+        ip.add(logo);
+        ip.add(Box.createRigidArea(new Dimension(0, 20)));
 
         // Player
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.gridwidth = 1;
-        gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 10);
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.PAGE_START;
-        player.setPreferredSize(new Dimension(450, 354));
-        //player.setPreferredSize(new Dimension(384, 288));
-        add(player, gridBagConstraints);
+        Dimension playerDim = new Dimension(450, 354);
+        player = new VPlayer.Builder("/tmp/test.avi").build();
+        player.setPreferredSize(playerDim);
+        player.setMaximumSize(playerDim);
+        player.setMinimumSize(playerDim);
+        player.setAlignmentX(Component.CENTER_ALIGNMENT);
+        ip.add(player);
+        ip.add(Box.createRigidArea(new Dimension(0, 10)));
 
         // Text
-        WelcomeScroll.setFont(new java.awt.Font("Verdana", 0, 12));
+        WelcomeTextPane = new javax.swing.JTextPane();
         WelcomeTextPane.setBackground(java.awt.SystemColor.control);
         WelcomeTextPane.setEditable(false);
         WelcomeTextPane.setFont(new java.awt.Font("Verdana", 0, 12));
         WelcomeTextPane.setFocusable(false);
         WelcomeTextPane.setMinimumSize(new java.awt.Dimension(6, 300));
         WelcomeTextPane.setPreferredSize(new java.awt.Dimension(6, 300));
-        WelcomeScroll.setViewportView(WelcomeTextPane);
+        WelcomeTextPane.setAlignmentX(Component.CENTER_ALIGNMENT);
+        ip.add(WelcomeTextPane);
 
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.gridwidth = 1;
-        gridBagConstraints.gridheight = java.awt.GridBagConstraints.REMAINDER;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 10);
-        add(WelcomeScroll, gridBagConstraints);
+        ScrollPane scroll = new ScrollPane();
+        scroll.add(ip);
+
+        add(scroll, BorderLayout.CENTER);
     }
 
     @Override
@@ -119,5 +106,10 @@ public final class HallRoom extends AbstractRoom {
     @Override
     public int getRoomPriority() {
         return 0;
+    }
+
+    @Override
+    public void closeRoom() {
+        player.release();
     }
 }

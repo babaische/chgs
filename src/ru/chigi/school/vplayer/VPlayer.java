@@ -38,8 +38,6 @@ public class VPlayer extends JPanel implements EventsHandler, VPlayerCallback {
     private JSlider progressSlider;
     private JSlider volumeSlider;
     private JButton playButton;
-    private JButton stopButton;
-    private JButton fullScreenButton;
     private JButton muteButton;
     private JLabel progressLabel;
     private final Icon iconMuted = new ImageIcon(getClass().getResource("/ru/chigi/school/vplayer/resources/muted.png"));
@@ -47,11 +45,8 @@ public class VPlayer extends JPanel implements EventsHandler, VPlayerCallback {
     private final Icon iconPlay = new ImageIcon(getClass().getResource("/ru/chigi/school/vplayer/resources/play.png"));
     private final Icon iconPause = new ImageIcon(getClass().getResource("/ru/chigi/school/vplayer/resources/pause.png"));
     private final Icon iconFS = new ImageIcon(getClass().getResource("/ru/chigi/school/vplayer/resources/fullscreen.png"));
-    private JFrame parentFrame;
-    private FullScreenFrame fsFrame;
     private boolean allowFullscreen;
-    private final String PLAY_TXT = "Play (SPACE)";
-    private final String PAUSE_TXT = "Pause (SPACE)";
+    private final String PLAY_TXT = "Play";
     private VPlayerCallback callback;
     private String mediaSource = null;
     private boolean playerInited = false;
@@ -60,17 +55,11 @@ public class VPlayer extends JPanel implements EventsHandler, VPlayerCallback {
 
     public static class Builder {
         private String mediaSource = null;
-        private JFrame parentFrame = null;
         private boolean allowFullscreen = true;
         private VPlayerCallback callback = null;
 
         public Builder(String src) {
             mediaSource = src;
-        }
-
-        public Builder parent(JFrame parent) {
-            parentFrame = parent;
-            return this;
         }
 
         public Builder fullscreen(boolean val) {
@@ -92,7 +81,6 @@ public class VPlayer extends JPanel implements EventsHandler, VPlayerCallback {
         super();
 
         mediaSource = builder.mediaSource;
-        parentFrame = builder.parentFrame;
         allowFullscreen = builder.allowFullscreen;
         callback = builder.callback;
         canvas = RuntimeUtil.isWindows() ? new WindowsCanvas() : new Canvas();
@@ -141,6 +129,7 @@ public class VPlayer extends JPanel implements EventsHandler, VPlayerCallback {
         if (mediaPlayer != null) {
             mediaPlayer.close();
             mediaPlayer = null;
+            playerInited = false;
         }
     }
 
@@ -198,7 +187,7 @@ public class VPlayer extends JPanel implements EventsHandler, VPlayerCallback {
             }
         });
 
-        stopButton = new JButton();
+        JButton stopButton = new JButton();
         stopButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ru/chigi/school/vplayer/resources/stop.png")));
         stopButton.setToolTipText("Stop");
         stopButton.setFocusable(false);
@@ -210,7 +199,7 @@ public class VPlayer extends JPanel implements EventsHandler, VPlayerCallback {
         });
 
         // Toggle fullscreen button
-        fullScreenButton = new JButton();
+        JButton fullScreenButton = new JButton();
         fullScreenButton.setIcon(iconFS);
         fullScreenButton.setToolTipText("Toggle fullscreen mode");
         fullScreenButton.setFocusable(false);
@@ -223,7 +212,7 @@ public class VPlayer extends JPanel implements EventsHandler, VPlayerCallback {
                     stop();
 
                 SwingUtilities.windowForComponent(self).setVisible(false);
-                fsFrame = new FullScreenFrame(state, self);
+                new FullScreenFrame(state, self);
             }
         });
         fullScreenButton.setEnabled(allowFullscreen);
@@ -360,7 +349,7 @@ public class VPlayer extends JPanel implements EventsHandler, VPlayerCallback {
         mediaLength = mediaPlayer.getLength();
         volumeSlider.setValue(mediaPlayer.getVolume());
         playButton.setIcon(iconPause);
-        playButton.setToolTipText(PAUSE_TXT);
+        playButton.setToolTipText("Pause");
     }
 
     @Override
@@ -384,14 +373,16 @@ public class VPlayer extends JPanel implements EventsHandler, VPlayerCallback {
         progressLabel.setText(txt);
 
         if(!progressSlider.getValueIsAdjusting()) {
-            int current_progress = progressSlider.getValue();
-            int new_progress = percent(mediaLength, l);
+		      synchronized(this) {
+                int current_progress = progressSlider.getValue();
+                int new_progress = percent(mediaLength, l);
 
-            if(current_progress != new_progress) {
-                progressSliderAdjusting = true;
-                progressSlider.setValue(percent(mediaLength, l));
-                progressSliderAdjusting = false;
-            }
+                if(current_progress != new_progress) {
+                    progressSliderAdjusting = true;
+                    progressSlider.setValue(percent(mediaLength, l));
+                    progressSliderAdjusting = false;
+                }
+				}
         }
     }
 

@@ -23,7 +23,6 @@ import ru.chigi.school.AbstractRoom;
 import javax.swing.*;
 
 public class ClassRoom extends AbstractRoom {
-
     @Override
     public String getRoomName() {
         return "Classroom";

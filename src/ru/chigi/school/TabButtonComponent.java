@@ -84,6 +84,8 @@ public class TabButtonComponent extends JPanel {
             int i = workspace.indexOfTabComponent(TabButtonComponent.this);
 
             if (i != -1) {
+                ((RoomInterface) workspace.getComponentAt(i)).closeRoom();
+
                 workspace.remove(i);
             }
         }

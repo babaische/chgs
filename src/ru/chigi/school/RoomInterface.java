@@ -72,4 +72,9 @@ public interface RoomInterface extends Comparable<RoomInterface> {
      * @return Room
      */
     public JPanel getRoom();
+
+    /**
+     * Close room
+     */
+    public void closeRoom();
 }
