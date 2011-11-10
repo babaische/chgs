@@ -28,5 +28,5 @@ public interface EventsHandler {
     public void stopped();
 
     /* Video position changed */
-    public void lengthChanged(long length);
+    public void timeChanged(long length);
 }

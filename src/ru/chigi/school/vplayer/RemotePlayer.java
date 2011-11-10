@@ -170,8 +170,8 @@ public class RemotePlayer implements Runnable {
                         eh.paused();
                     else if(line.equals("stopped"))
                         eh.stopped();
-                    else if(line.startsWith("lengthChanged ")) {
-                        eh.lengthChanged(Long.parseLong(line.substring("lengthChanged ".length())));
+                    else if(line.startsWith("timeChanged ")) {
+                        eh.timeChanged(Long.parseLong(line.substring("timeChanged ".length())));
                     }
                 }
                 // If not notification, then print to stderr

@@ -25,14 +25,13 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.io.Serializable;
 import java.util.concurrent.TimeUnit;
 
 /**
  * Media player wrapper
  * @author Max E. Kuznecov <mek@mek.uz.ua>
  */
-public class VPlayer extends JPanel implements Serializable, EventsHandler {
+public class VPlayer extends JPanel implements EventsHandler, VPlayerCallback {
     private Canvas canvas;
     private RemotePlayer mediaPlayer;
     private JToolBar toolbar;
@@ -56,6 +55,8 @@ public class VPlayer extends JPanel implements Serializable, EventsHandler {
     private VPlayerCallback callback;
     private String mediaSource = null;
     private boolean playerInited = false;
+    private long mediaLength = 0;
+    private boolean progressSliderAdjusting = false;
 
     public static class Builder {
         private String mediaSource = null;
@@ -134,9 +135,8 @@ public class VPlayer extends JPanel implements Serializable, EventsHandler {
      * Release player resources
      */
     public void release() {
-        if (callback != null) {
-            callback.released(this);
-        }
+        if (callback != null)
+            callback.playerReleased(this);
 
         if (mediaPlayer != null) {
             mediaPlayer.close();
@@ -180,6 +180,8 @@ public class VPlayer extends JPanel implements Serializable, EventsHandler {
      * Init toolbar and all its components
      */
     private void initToolbar() {
+        final VPlayer self = this;
+
         toolbar = new JToolBar();
         toolbar.setFloatable(false);
         toolbar.setRollover(true);
@@ -220,7 +222,8 @@ public class VPlayer extends JPanel implements Serializable, EventsHandler {
                 if (mediaPlayer.isPlaying())
                     stop();
 
-                fsFrame = new FullScreenFrame(state);
+                SwingUtilities.windowForComponent(self).setVisible(false);
+                fsFrame = new FullScreenFrame(state, self);
             }
         });
         fullScreenButton.setEnabled(allowFullscreen);
@@ -263,7 +266,6 @@ public class VPlayer extends JPanel implements Serializable, EventsHandler {
         toolbar.add(stopButton);
         toolbar.add(fullScreenButton);
         toolbar.addSeparator();
-        toolbar.add(Box.createRigidArea(new Dimension(10, 0)));
         toolbar.add(progressLabel);
 
         toolbar.add(Box.createHorizontalGlue());
@@ -294,6 +296,9 @@ public class VPlayer extends JPanel implements Serializable, EventsHandler {
         progressSlider.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
+                if(progressSliderAdjusting)
+                    return;
+
                 ensureInited();
 
                 JSlider src = (JSlider) e.getSource();
@@ -352,13 +357,10 @@ public class VPlayer extends JPanel implements Serializable, EventsHandler {
 
     @Override
     public void playing() {
+        mediaLength = mediaPlayer.getLength();
         volumeSlider.setValue(mediaPlayer.getVolume());
         playButton.setIcon(iconPause);
         playButton.setToolTipText(PAUSE_TXT);
-
-        if (callback != null) {
-            callback.playing(this);
-        }
     }
 
     @Override
@@ -373,13 +375,36 @@ public class VPlayer extends JPanel implements Serializable, EventsHandler {
     }
 
     @Override
-    public void lengthChanged(long l) {
+    public void timeChanged(long l) {
         String txt = String.format("%02d:%02d:%02d",
                 TimeUnit.MILLISECONDS.toHours(l),
                 TimeUnit.MILLISECONDS.toMinutes(l) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(l)),
                 TimeUnit.MILLISECONDS.toSeconds(l) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(l)));
 
         progressLabel.setText(txt);
+
+        if(!progressSlider.getValueIsAdjusting()) {
+            int current_progress = progressSlider.getValue();
+            int new_progress = percent(mediaLength, l);
+
+            if(current_progress != new_progress) {
+                progressSliderAdjusting = true;
+                progressSlider.setValue(percent(mediaLength, l));
+                progressSliderAdjusting = false;
+            }
+        }
+    }
+
+    @Override
+    public void playerReleased(VPlayer player) {
+        // Restore state from closed fs player
+        SwingUtilities.windowForComponent(this).setVisible(true);
+
+        setState(player.getState());
+    }
+
+    private int percent(long total, long current) {
+        return (int) (current / (total/100));
     }
 
 }

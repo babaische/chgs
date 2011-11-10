@@ -30,6 +30,5 @@ public interface VPlayerCallback {
      * Called when player is about to be released
      * @param player
      */
-    public void released(VPlayer player);
-    public void playing(VPlayer player);
+    public void playerReleased(VPlayer player);
 }

@@ -32,7 +32,7 @@ class FullScreenFrame extends JFrame {
 
     private VPlayer player;
 
-    public FullScreenFrame(VPlayerState state) {
+    public FullScreenFrame(VPlayerState state, VPlayerCallback cb) {
         super("VPlayer - full screen mode");
 
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -48,7 +48,7 @@ class FullScreenFrame extends JFrame {
         pack();
         setVisible(true);
 
-        player = new VPlayer.Builder(state.getMediaSource()).parent(this).fullscreen(false).build();
+        player = new VPlayer.Builder(state.getMediaSource()).parent(this).fullscreen(false).callback(cb).build();
         player.setPreferredSize(Toolkit.getDefaultToolkit().getScreenSize());
 
         initMap();

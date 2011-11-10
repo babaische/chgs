@@ -104,8 +104,8 @@ public class OutOfProcessPlayer {
             }
 
             @Override
-            public void lengthChanged(MediaPlayer mp, long l) {
-                doNotify(String.format("stopped %d", l));
+            public void timeChanged(MediaPlayer mp, long np) {
+                doNotify(String.format("timeChanged %d", np));
             }
         };
 
