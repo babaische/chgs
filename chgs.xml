@@ -82,6 +82,11 @@
       <include name="platform.jar"/>
       <include name="vlcj-1.1.5.1.jar"/>
 	 </fileset>
+
+	 <fileset dir="xml">
+      <include name="chgs_courses.dtd" />
+      <include name="chgs_lesson.dtd" />
+	 </fileset>
   </path>
   
   <property name="project.jdk.home" value="${jdk.home.1.6}"/>
@@ -170,6 +175,12 @@
 
      <copy todir="${chgs.output.dir}/ext">
          <fileset dir="${module.chgs.basedir}/ext/">
+             <type type="file"/>
+         </fileset>
+     </copy>
+
+     <copy todir="${chgs.output.dir}/xml">
+         <fileset dir="${module.chgs.basedir}/xml/">
              <type type="file"/>
          </fileset>
      </copy>

@@ -32,8 +32,12 @@ import java.net.URL;
 public final class HallRoom extends AbstractRoom {
     private javax.swing.JTextPane WelcomeTextPane;
     private ru.chigi.school.vplayer.VPlayer player;
+    private final ImageIcon icon16 = new ImageIcon(getClass().getResource("/ru/chigi/school/hall/resources/hall16.png"));
+    private final ImageIcon icon32 = new ImageIcon(getClass().getResource("/ru/chigi/school/hall/resources/hall32.png"));
 
     public HallRoom() {
+        super();
+
         initComponents();
         URL welcomeText = getClass().getResource("/ru/chigi/school/hall/resources/welcome_ru.html");
 
@@ -58,7 +62,7 @@ public final class HallRoom extends AbstractRoom {
 
         // Player
         Dimension playerDim = new Dimension(450, 354);
-        player = new VPlayer.Builder("/tmp/test.avi").build();
+        player = new VPlayer.Builder("/tmp/x.avi").build();
         player.setPreferredSize(playerDim);
         player.setMaximumSize(playerDim);
         player.setMinimumSize(playerDim);
@@ -95,12 +99,12 @@ public final class HallRoom extends AbstractRoom {
 
     @Override
     public ImageIcon getRoomIcon16() {
-        return new ImageIcon(getClass().getResource("/ru/chigi/school/hall/resources/hall16.png"));
+        return icon16;
     }
 
     @Override
     public ImageIcon getRoomIcon32() {
-        return new ImageIcon(getClass().getResource("/ru/chigi/school/hall/resources/hall32.png"));
+        return icon32;
     }
 
     @Override

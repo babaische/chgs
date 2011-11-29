@@ -1,0 +1,16 @@
+<!ELEMENT courses (course+)>
+<!ELEMENT course (description, authors, url?, lessons)>
+<!ELEMENT description (#PCDATA)>
+<!ELEMENT authors (author+)>
+<!ELEMENT author (#PCDATA)>
+<!ELEMENT url (#PCDATA)>
+<!ELEMENT lessons (lesson+)>
+<!ELEMENT lesson EMPTY>
+
+<!ATTLIST courses updated CDATA #REQUIRED>
+<!ATTLIST course id ID #REQUIRED>
+<!ATTLIST description lang CDATA #REQUIRED>
+<!ATTLIST author email CDATA #IMPLIED>
+<!ATTLIST lesson
+          id CDATA #REQUIRED
+          checksum CDATA #REQUIRED>

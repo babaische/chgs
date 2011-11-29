@@ -22,6 +22,7 @@
  */
 package ru.chigi.school;
 
+import ru.chigi.school.course.ListParser;
 import ru.chigi.school.log.Log;
 
 import javax.swing.*;
@@ -86,6 +87,7 @@ public class MainFrame extends JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
 
             public void run() {
+                System.out.format("*** %s\n", new ListParser().parse("/tmp/list.xml"));
                 new MainFrame().setVisible(true);
             }
         });
@@ -197,5 +199,3 @@ public class MainFrame extends JFrame {
         return tb;
     }
 }
-
-

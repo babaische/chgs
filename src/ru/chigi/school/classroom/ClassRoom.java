@@ -19,10 +19,21 @@
 package ru.chigi.school.classroom;
 
 import ru.chigi.school.AbstractRoom;
+import ru.chigi.school.course.CourseManager;
 
 import javax.swing.*;
+import java.awt.*;
 
 public class ClassRoom extends AbstractRoom {
+    private ImageIcon icon16 = new ImageIcon(getClass().getResource("/ru/chigi/school/classroom/resources/classroom16.png"));
+    private ImageIcon icon32 = new ImageIcon(getClass().getResource("/ru/chigi/school/classroom/resources/classroom32.png"));
+
+    public ClassRoom() {
+        super();
+
+        initComponents();
+    }
+
     @Override
     public String getRoomName() {
         return "Classroom";
@@ -35,16 +46,30 @@ public class ClassRoom extends AbstractRoom {
 
     @Override
     public ImageIcon getRoomIcon16() {
-        return new ImageIcon(getClass().getResource("/ru/chigi/school/classroom/resources/classroom16.png"));
+        return icon16;
     }
 
     @Override
     public ImageIcon getRoomIcon32() {
-        return new ImageIcon(getClass().getResource("/ru/chigi/school/classroom/resources/classroom32.png"));
+        return icon32;
     }
 
     @Override
     public int getRoomPriority() {
         return 10;
+    }
+
+    private void initComponents() {
+        setLayout(new BorderLayout());
+
+        JPanel navigator = new JPanel();
+        navigator.add(new JButton("Navigator"));
+
+        JPanel workspace = new JPanel();
+        workspace.setPreferredSize(new Dimension(200, 300));
+        workspace.add(new JButton("AAAAA"));
+
+        add(navigator, BorderLayout.LINE_START);
+        add(workspace, BorderLayout.CENTER);
     }
 }

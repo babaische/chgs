@@ -396,7 +396,10 @@ public class VPlayer extends JPanel implements EventsHandler, VPlayerCallback {
     }
 
     private int percent(long total, long current) {
-        return (int) (current / (total/100));
+        if(total == 0)
+            return 0;
+        else
+            return (int) (current / (total/100));
     }
 
 }

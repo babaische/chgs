@@ -1,0 +1,34 @@
+<!ELEMENT lesson (order, name+, description+,
+          video, summary+, attention+, goal?, exercises?, bookmarks?, tags?)> 
+<!ELEMENT order (#PCDATA)>
+<!ELEMENT name (#PCDATA)>
+<!ELEMENT description (#PCDATA)>
+<!ELEMENT video (#PCDATA)>
+<!ELEMENT summary (sum-element+)>
+<!ELEMENT sum-element (#PCDATA)>
+<!ELEMENT attention (att-element+)>
+<!ELEMENT att-element (#PCDATA)>
+<!ELEMENT goal (#PCDATA)>
+<!ELEMENT exercises (exercise+)>
+<!ELEMENT exercise (#PCDATA)>
+<!ELEMENT bookmarks (bookmark+)>
+<!ELEMENT bookmark (#PCDATA)>
+<!ELEMENT tags (tag+)>
+<!ELEMENT tag (#PCDATA)>
+
+<!ATTLIST lesson
+          id ID #REQUIRED
+          course CDATA #REQUIRED>
+<!ATTLIST name lang CDATA #REQUIRED>
+<!ATTLIST description lang CDATA #REQUIRED>
+<!ATTLIST summary
+          name CDATA #REQUIRED
+          lang CDATA #REQUIRED>
+<!ATTLIST attention lang CDATA #REQUIRED>
+<!ATTLIST goal lang CDATA #REQUIRED>
+<!ATTLIST exercises lang CDATA #REQUIRED>
+<!ATTLIST exercise type (text | note) #REQUIRED>
+<!ATTLIST bookmark
+          offset CDATA #REQUIRED
+          lang CDATA #REQUIRED>
+<!ATTLIST tag lang CDATA #REQUIRED>
