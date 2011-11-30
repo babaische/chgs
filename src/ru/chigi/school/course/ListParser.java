@@ -28,7 +28,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,6 +36,9 @@ import java.util.List;
  */
 public class ListParser {
     private List<Course> courses = new ArrayList<Course>();
+    private final List<Author> authors = new ArrayList<Author>();
+    private final List<LessonPointer> lessons = new ArrayList<LessonPointer>();
+
     private Course course = null;
     private String textTag = null;
     private Attributes attrs = null;
@@ -76,6 +78,12 @@ public class ListParser {
                 course = new Course();
                 course.setId(attributes.getValue("id"));
             }
+            else if(qname.equalsIgnoreCase(Tags.LESSON_TAG)) {
+                String id = attributes.getValue("id");
+                String checksum = attributes.getValue("checksum");
+
+                lessons.add(new LessonPointer(id, checksum));
+            }
             else {
                 textTag = qname;
                 attrs = attributes;
@@ -86,6 +94,12 @@ public class ListParser {
         public void endElement(String uri, String local, String qname) throws SAXException {
             if(qname.equalsIgnoreCase(Tags.COURSE_TAG)) {
                 if(course != null) {
+                    if(!authors.isEmpty())
+                        course.setAuthors(authors);
+
+                    if(!lessons.isEmpty())
+                        course.setLessons(lessons);
+
                     courses.add(course);
                     course = null;
                 }
@@ -99,13 +113,20 @@ public class ListParser {
         public void characters(char[] chars, int start, int length) throws SAXException {
             String text = new String(chars, start, length);
 
-            if(textTag == Tags.DESCRIPTION_TAG)
+            if(textTag.equalsIgnoreCase(Tags.DESCRIPTION_TAG))
                 course.setDescription(attrs.getValue("lang"), text);
 
-            else if(textTag == Tags.URL_TAG)
+            else if(textTag.equalsIgnoreCase(Tags.URL_TAG))
                 course.setUrl(text);
 
-            return;
+            else if(textTag.equalsIgnoreCase(Tags.AUTHOR_TAG)) {
+                String email = attrs.getValue("email");
+
+                if(email == null)
+                    email = "";
+
+                authors.add(new Author(text, email));
+            }
         }
     }
 }

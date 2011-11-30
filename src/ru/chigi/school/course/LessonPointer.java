@@ -17,13 +17,12 @@
  */
 package ru.chigi.school.course;
 
-import java.util.ArrayList;
-import java.util.List;
+public class LessonPointer {
+    private final String id;
+    private final String checksum;
 
-public class CourseManager {
-    private List<Course> courses;
-
-    public CourseManager() {
-        courses = new ListParser().parse("/tmp/list.xml");
+    public LessonPointer(String id, String checksum) {
+        this.id = id;
+        this.checksum = checksum;
     }
 }

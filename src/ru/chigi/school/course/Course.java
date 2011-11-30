@@ -19,6 +19,7 @@ package ru.chigi.school.course;
 
 import java.net.URL;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -27,10 +28,11 @@ import java.util.Map;
 public class Course {
     private String id;
     private Map<String, String> descriptions = new HashMap<String, String>();
-    private Author[] authors;
+    private List<Author> authors;
+
+    private List<LessonPointer> lessons;
     private String url;
     private final String defaultLang = "default";
-    //private final Lesson[] lessons;
 
     public String getId() {
         return id;
@@ -50,12 +52,20 @@ public class Course {
         this.descriptions.put(lang, description);
     }
 
-    public Author[] getAuthors() {
+    public List<Author> getAuthors() {
         return authors;
     }
 
-    public void setAuthors(Author[] authors) {
+    public void setAuthors(List<Author> authors) {
         this.authors = authors;
+    }
+
+    public List<LessonPointer> getLessons() {
+        return lessons;
+    }
+
+    public void setLessons(List<LessonPointer> lessons) {
+        this.lessons = lessons;
     }
 
     public String getUrl() {

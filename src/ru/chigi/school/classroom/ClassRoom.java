@@ -18,10 +18,13 @@
 
 package ru.chigi.school.classroom;
 
+import com.sun.org.apache.bcel.internal.generic.NEW;
 import ru.chigi.school.AbstractRoom;
 import ru.chigi.school.course.CourseManager;
 
 import javax.swing.*;
+import javax.swing.border.EtchedBorder;
+import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.*;
 
 public class ClassRoom extends AbstractRoom {
@@ -62,8 +65,7 @@ public class ClassRoom extends AbstractRoom {
     private void initComponents() {
         setLayout(new BorderLayout());
 
-        JPanel navigator = new JPanel();
-        navigator.add(new JButton("Navigator"));
+        JPanel navigator = initNavigator();
 
         JPanel workspace = new JPanel();
         workspace.setPreferredSize(new Dimension(200, 300));
@@ -71,5 +73,27 @@ public class ClassRoom extends AbstractRoom {
 
         add(navigator, BorderLayout.LINE_START);
         add(workspace, BorderLayout.CENTER);
+    }
+
+    /**
+     * Init navigator panel
+     * @return navigator
+     */
+    private JPanel initNavigator() {
+        JPanel nav = new JPanel(new BorderLayout(0, 5));
+
+        String[] courses = {"Музыкальная школа гитары", "Школа композиции и аранжировки Бориса Севастьянова"};
+        JComboBox courseSelector = new JComboBox(courses);
+
+        DefaultMutableTreeNode root = new DefaultMutableTreeNode("Музыкальная школа гитары");
+        JTree tree = new JTree(root);
+        JScrollPane treeView = new JScrollPane(tree);
+
+        JTextField filter = new JTextField("Search...");
+        nav.add(courseSelector, BorderLayout.PAGE_START);
+        nav.add(treeView, BorderLayout.CENTER);
+        nav.add(filter, BorderLayout.PAGE_END);
+
+        return nav;
     }
 }

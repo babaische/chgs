@@ -21,4 +21,6 @@ public class Tags {
     public static String COURSE_TAG = "course";
     public static String DESCRIPTION_TAG = "description";
     public static String URL_TAG = "url";
+    public static String AUTHOR_TAG = "author";
+    public static String LESSON_TAG = "lesson";
 }

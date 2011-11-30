@@ -87,7 +87,6 @@ public class MainFrame extends JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
 
             public void run() {
-                System.out.format("*** %s\n", new ListParser().parse("/tmp/list.xml"));
                 new MainFrame().setVisible(true);
             }
         });
