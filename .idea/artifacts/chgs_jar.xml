@@ -1,0 +1,11 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="chgs:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/chgs_jar</output-path>
+    <root id="archive" name="chgs.jar">
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/src/META-INF/MANIFEST.MF" />
+      </element>
+      <element id="module-output" name="chgs" />
+    </root>
+  </artifact>
+</component>
