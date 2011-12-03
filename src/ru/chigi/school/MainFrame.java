@@ -22,7 +22,6 @@
  */
 package ru.chigi.school;
 
-import ru.chigi.school.course.ListParser;
 import ru.chigi.school.log.Log;
 
 import javax.swing.*;
@@ -39,9 +38,12 @@ import java.awt.event.KeyEvent;
 public class MainFrame extends JFrame {
     private final RoomManager roomManager = new RoomManager();
     private Workspace workspace;
+    private final Config config;
 
     public MainFrame() {
         setTitle("Chigi guitar school");
+
+        config = new Config();
 
         workspace = new Workspace();
         setLayout(new BorderLayout());

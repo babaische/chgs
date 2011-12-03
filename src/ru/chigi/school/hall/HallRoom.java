@@ -20,7 +20,6 @@ import ru.chigi.school.AbstractRoom;
 import ru.chigi.school.vplayer.VPlayer;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import java.awt.*;
 import java.io.IOException;
 import java.net.URL;
@@ -37,16 +36,10 @@ public final class HallRoom extends AbstractRoom {
 
     public HallRoom() {
         super();
-
-        initComponents();
-        URL welcomeText = getClass().getResource("/ru/chigi/school/hall/resources/welcome_ru.html");
-
-        try {
-            WelcomeTextPane.setPage(welcomeText);
-        } catch (IOException ex) {}
     }
 
-    private void initComponents() {
+    @Override
+    public void initUI() {
         setLayout(new BorderLayout());
 
         // Internal panel
@@ -85,6 +78,12 @@ public final class HallRoom extends AbstractRoom {
         scroll.add(ip);
 
         add(scroll, BorderLayout.CENTER);
+
+        URL welcomeText = getClass().getResource("/ru/chigi/school/hall/resources/welcome_ru.html");
+
+        try {
+            WelcomeTextPane.setPage(welcomeText);
+        } catch (IOException ex) {}
     }
 
     @Override

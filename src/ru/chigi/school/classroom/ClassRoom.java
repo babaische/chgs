@@ -18,23 +18,25 @@
 
 package ru.chigi.school.classroom;
 
-import com.sun.org.apache.bcel.internal.generic.NEW;
 import ru.chigi.school.AbstractRoom;
+import ru.chigi.school.course.Course;
 import ru.chigi.school.course.CourseManager;
+import ru.chigi.school.course.LessonPointer;
 
 import javax.swing.*;
-import javax.swing.border.EtchedBorder;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ClassRoom extends AbstractRoom {
     private ImageIcon icon16 = new ImageIcon(getClass().getResource("/ru/chigi/school/classroom/resources/classroom16.png"));
     private ImageIcon icon32 = new ImageIcon(getClass().getResource("/ru/chigi/school/classroom/resources/classroom32.png"));
+    private ImageIcon lesson16 = new ImageIcon(getClass().getResource("/ru/chigi/school/classroom/resources/lesson16.png"));
 
     public ClassRoom() {
         super();
-
-        initComponents();
     }
 
     @Override
@@ -62,7 +64,8 @@ public class ClassRoom extends AbstractRoom {
         return 10;
     }
 
-    private void initComponents() {
+    @Override
+    public void initUI() {
         setLayout(new BorderLayout());
 
         JPanel navigator = initNavigator();
@@ -80,19 +83,47 @@ public class ClassRoom extends AbstractRoom {
      * @return navigator
      */
     private JPanel initNavigator() {
-        JPanel nav = new JPanel(new BorderLayout(0, 5));
+        JPanel nav = new JPanel(new BorderLayout());
 
-        String[] courses = {"Музыкальная школа гитары", "Школа композиции и аранжировки Бориса Севастьянова"};
-        JComboBox courseSelector = new JComboBox(courses);
+        List<String> courses = new ArrayList<String>();
+        Course selectedCourse = null;
+
+        for(Course c : CourseManager.getDefault().getCourses()) {
+            courses.add(c.getDescription());
+
+            if(selectedCourse == null)
+                selectedCourse = c;
+        }
+
+        JComboBox courseSelector = new JComboBox(courses.toArray());
+        courseSelector.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
         DefaultMutableTreeNode root = new DefaultMutableTreeNode("Музыкальная школа гитары");
+
+        for(LessonPointer lp : selectedCourse.getLessons()) {
+            root.add(new DefaultMutableTreeNode(lp));
+        }
+
         JTree tree = new JTree(root);
+        tree.setRootVisible(false);
+
+        DefaultTreeCellRenderer renderer =  new DefaultTreeCellRenderer();
+        renderer.setLeafIcon(lesson16);
+        tree.setCellRenderer(renderer);
+
         JScrollPane treeView = new JScrollPane(tree);
+        treeView.setBorder(BorderFactory.createEmptyBorder(0, 5, 5, 5));
 
         JTextField filter = new JTextField("Search...");
+        JPanel filterPanel = new JPanel(new BorderLayout());
+        filterPanel.add(filter, BorderLayout.CENTER);
+        filterPanel.setBorder(BorderFactory.createEmptyBorder(0, 5, 5, 5));
+
         nav.add(courseSelector, BorderLayout.PAGE_START);
         nav.add(treeView, BorderLayout.CENTER);
-        nav.add(filter, BorderLayout.PAGE_END);
+        nav.add(filterPanel, BorderLayout.PAGE_END);
+
+        nav.setBorder(BorderFactory.createEtchedBorder());
 
         return nav;
     }

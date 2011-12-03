@@ -25,4 +25,9 @@ public class LessonPointer {
         this.id = id;
         this.checksum = checksum;
     }
+
+    @Override
+    public String toString() {
+        return id;
+    }
 }

@@ -160,6 +160,8 @@
       <patternset refid="excluded.from.compilation.chgs"/>
     </javac>
     
+	 <copy file="system.conf" todir="${chgs.output.dir}" />
+
     <copy todir="${chgs.output.dir}">
       <fileset dir="${module.chgs.basedir}/src">
         <patternset refid="compiler.resources"/>

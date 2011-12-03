@@ -17,7 +17,6 @@
  */
 package ru.chigi.school.course;
 
-import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +31,7 @@ public class Course {
 
     private List<LessonPointer> lessons;
     private String url;
-    private final String defaultLang = "default";
+    private final String defaultLang = "ru";
 
     public String getId() {
         return id;
@@ -40,6 +39,10 @@ public class Course {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getDescription() {
+        return getDescription(defaultLang);
     }
 
     public String getDescription(String lang) {

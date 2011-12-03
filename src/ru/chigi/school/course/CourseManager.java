@@ -17,13 +17,34 @@
  */
 package ru.chigi.school.course;
 
+import ru.chigi.school.ChgsException;
+import ru.chigi.school.log.Log;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class CourseManager {
-    private List<Course> courses;
+    private static CourseManager instance = null;
+    private List<Course> courses = null;
 
-    public CourseManager() {
-        courses = new ListParser().parse("/tmp/list.xml");
+    public static CourseManager getDefault() {
+        if(instance == null)
+            instance = new CourseManager();
+
+        return instance;
+    }
+
+    public List<Course> getCourses() {
+        return courses;
+    }
+
+    private CourseManager() {
+        try {
+            courses = new ListParser().parse("/tmp/list.xml");
+        }
+        catch (ChgsException e) {
+            Log.getDefault().severe("Unable to parse courses list: %s", e);
+            courses = new ArrayList<Course>();
+        }
     }
 }

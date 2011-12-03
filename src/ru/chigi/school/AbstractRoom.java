@@ -25,6 +25,7 @@ public abstract class AbstractRoom extends JPanel implements RoomInterface {
     abstract public ImageIcon getRoomIcon16();
     abstract public ImageIcon getRoomIcon32();
     abstract public int getRoomPriority();
+    private boolean uiInited = false;
 
     @Override
     public boolean showInMenu () {
@@ -38,12 +39,20 @@ public abstract class AbstractRoom extends JPanel implements RoomInterface {
 
     @Override
     public JPanel getRoom() {
+        if(!uiInited) {
+            initUI();
+            uiInited = true;
+        }
+
         return this;
     }
 
     @Override
     public void closeRoom() {
         return;
+    }
+
+    public void initUI() {
     }
 
     public int compareTo(RoomInterface other) {

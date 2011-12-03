@@ -20,6 +20,7 @@ package ru.chigi.school.course;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
+import ru.chigi.school.ChgsException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -43,7 +44,7 @@ public class ListParser {
     private String textTag = null;
     private Attributes attrs = null;
 
-    public List<Course> parse(String listXML) {
+    public List<Course> parse(String listXML) throws ChgsException {
         SAXParserFactory factory = SAXParserFactory.newInstance();
         factory.setValidating(true);
 
@@ -56,16 +57,16 @@ public class ListParser {
             parser.parse(input, handler);
         }
         catch (FileNotFoundException e) {
-            courses = null;
+            throw new ChgsException(e);
         }
         catch (ParserConfigurationException e) {
-            courses = null;
+            throw new ChgsException(e);
         }
         catch (SAXException e) {
-            courses = null;
+            throw new ChgsException(e);
         }
         catch (IOException e) {
-            courses = null;
+            throw new ChgsException(e);
         }
 
         return courses;
